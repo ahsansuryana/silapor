@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+
+  --color-surface: #fdf9f2;
+  --color-surface-container-low: #f7f3ed;
+  --color-surface-container-high: #ebe8e1;
+  --color-surface-container-highest: #e6e2dc;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface: #1c1c18;
+  --color-on-surface-variant: #3e4943;
+  --color-primary: #006c4e;
+  --color-primary-container: #3ea882;
+  --color-secondary-container: #febb35;
+  --color-on-secondary-container: #6e4c00;
+  --color-tertiary-container: #de7974;
+  --color-on-tertiary-container: #5b1415;
+  --color-primary-fixed: #8ff6cb;
+  --color-on-primary-fixed-variant: #00513a;
+  --color-secondary-fixed: #ffdeaa;
+  --color-tertiary-fixed: #ffdad7;
+  --color-on-tertiary-fixed-variant: #7b2d2b;
+  --color-outline-variant: #bdcac1;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-headline;
+  }
+}
+
+.glass-header {
+  @apply bg-surface/80 backdrop-blur-xl;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,25 @@
+# Environment
+.env
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# Firebase
+firebase-service-account.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (jangan commit data db)
+db_data/
+minio_data/
