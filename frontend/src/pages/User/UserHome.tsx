@@ -172,31 +172,31 @@ export default function UserHome() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-2xl border-t border-outline-variant/10 px-8 py-3">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-2xl border-t border-outline-variant/10 px-4 py-3">
         <div className="max-w-md mx-auto flex justify-between items-center">
-          <Link to="/home" className="flex flex-col items-center gap-1 text-primary">
+          <Link to="/home" className="w-[72px] flex flex-col items-center gap-1 text-primary py-1">
             <div className="p-1.5 rounded-xl bg-primary/10">
-              <LayoutGrid className="w-6 h-6" />
+              <LayoutGrid className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest">Home</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Home</span>
           </Link>
-          <Link to="/reports" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors">
-            <History className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">History</span>
+          <Link to="/reports" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1">
+            <History className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">History</span>
           </Link>
-          <div className="relative -top-8">
-            <Link to="/report/new" className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30 text-white active:scale-90 transition-transform">
-              <Plus className="w-8 h-8" />
+          <div className="relative -top-6">
+            <Link to="/report/new" className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30 text-white active:scale-90 transition-transform">
+              <Plus className="w-6 h-6" />
             </Link>
           </div>
-          <Link to="#" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors relative">
-            <Bell className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Notification</span>
-            <span className="absolute top-[-4px] right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface"></span>
+          <Link to="#" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1 relative">
+            <Bell className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Notification</span>
+            <span className="absolute top-0 right-3 w-2 h-2 bg-error rounded-full border border-surface"></span>
           </Link>
-          <Link to="/profile" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors">
-            <User className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Profile</span>
+          <Link to="/profile" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1">
+            <User className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Profile</span>
           </Link>
         </div>
       </nav>
