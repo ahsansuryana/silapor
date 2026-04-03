@@ -45,10 +45,12 @@ export default function UserHome() {
           </div>
           
           <div className="flex items-center gap-3">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors relative">
-              <Bell className="w-5 h-5 text-on-surface-variant" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
-            </button>
+            <Link to="#" className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
+              <div className="relative">
+                <Bell className="w-5 h-5 text-on-surface-variant" />
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full border border-surface"></span>
+              </div>
+            </Link>
             <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20 hover:border-primary transition-all">
               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-full h-full object-cover" />
             </Link>
@@ -189,10 +191,12 @@ export default function UserHome() {
               <Plus className="w-6 h-6" />
             </Link>
           </div>
-          <Link to="#" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1 relative">
-            <Bell className="w-5 h-5" />
+          <Link to="#" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1">
+            <div className="relative">
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full border border-surface"></span>
+            </div>
             <span className="text-[10px] font-bold uppercase tracking-wider">Notification</span>
-            <span className="absolute top-2.5 right-[22px] w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
           </Link>
           <Link to="/profile" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1">
             <User className="w-5 h-5" />
