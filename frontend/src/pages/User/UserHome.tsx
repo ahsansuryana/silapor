@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   Bell, 
   Search, 
@@ -9,14 +9,12 @@ import {
   AlertCircle,
   LayoutGrid,
   History,
-  User,
-  LogOut
+  User
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import LogoSilapor from '../../assets/LOGO_SILAPOR.png';
 
 export default function UserHome() {
-  const navigate = useNavigate();
 
   const stats = [
     { label: 'Total Reports', value: '12', icon: <LayoutGrid className="w-5 h-5" />, color: 'bg-primary/10 text-primary' },
@@ -191,14 +189,15 @@ export default function UserHome() {
               <Plus className="w-8 h-8" />
             </Link>
           </div>
+          <Link to="#" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors relative">
+            <Bell className="w-6 h-6" />
+            <span className="text-[10px] font-bold uppercase tracking-widest">Notification</span>
+            <span className="absolute top-[-4px] right-1 w-2.5 h-2.5 bg-error rounded-full border-2 border-surface"></span>
+          </Link>
           <Link to="/profile" className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors">
             <User className="w-6 h-6" />
             <span className="text-[10px] font-bold uppercase tracking-widest">Profile</span>
           </Link>
-          <button onClick={() => navigate('/login')} className="flex flex-col items-center gap-1 text-on-surface-variant hover:text-error transition-colors">
-            <LogOut className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Exit</span>
-          </button>
         </div>
       </nav>
     </div>
