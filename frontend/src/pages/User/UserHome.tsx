@@ -192,7 +192,7 @@ export default function UserHome() {
           <Link to="#" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1 relative">
             <Bell className="w-5 h-5" />
             <span className="text-[10px] font-bold uppercase tracking-wider">Notification</span>
-            <span className="absolute top-0 right-3 w-2 h-2 bg-error rounded-full border border-surface"></span>
+            <span className="absolute top-2.5 right-[22px] w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
           </Link>
           <Link to="/profile" className="w-[72px] flex flex-col items-center gap-1 text-on-surface-variant hover:text-primary transition-colors py-1">
             <User className="w-5 h-5" />
