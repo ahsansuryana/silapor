@@ -7,6 +7,7 @@ import {
   Clock, 
   CheckCircle2, 
   AlertCircle,
+  LayoutGrid,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import LogoSilapor from '../../assets/LOGO_SILAPOR.png';
