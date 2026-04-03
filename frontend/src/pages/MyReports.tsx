@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import ScreenHeader from "../components/ui/ScreenHeader";
 import TabSelector from "../components/ui/TabSelector";
 import StatusBadge from "../components/ui/StatusBadge";
+import BottomNav from "../components/layout/BottomNav";
 
 export default function MyReports() {
   const navigate = useNavigate();
@@ -165,6 +166,8 @@ export default function MyReports() {
           </div>
         )}
       </main>
+
+      <BottomNav />
     </div>
   );
 }

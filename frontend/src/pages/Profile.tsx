@@ -13,6 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import LogoSilapor from "../assets/LOGO_SILAPOR.png";
+import BottomNav from "../components/layout/BottomNav";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -136,6 +137,8 @@ export default function Profile() {
           </section>
         </div>
       </main>
+
+      <BottomNav />
     </div>
   );
 }
