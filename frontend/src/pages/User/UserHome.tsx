@@ -13,6 +13,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import LogoSilapor from '../../assets/LOGO_SILAPOR.png';
 
 export default function UserHome() {
   const navigate = useNavigate();
@@ -35,12 +36,13 @@ export default function UserHome() {
       <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/10">
-              <span className="material-symbols-outlined text-white text-2xl">shield_with_heart</span>
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <div className="absolute inset-0 bg-surface-container-low rounded-2xl shadow-lg shadow-primary/20"></div>
+              <img src={LogoSilapor} alt="SILAPOR" className="relative w-8 h-8 object-contain" />
             </div>
             <div>
-              <h1 className="font-headline font-bold text-lg text-on-surface leading-tight">SILAPOR</h1>
-              <p className="font-body text-[10px] text-on-surface-variant font-semibold tracking-widest uppercase">Student Portal</p>
+              <h1 className="font-headline font-extrabold text-lg text-on-surface leading-tight tracking-tight">SILAPOR</h1>
+              <p className="font-body text-[10px] text-primary font-bold tracking-widest uppercase">Student Portal</p>
             </div>
           </div>
           

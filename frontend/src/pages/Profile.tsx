@@ -12,6 +12,7 @@ import {
   HelpCircle,
   FileText,
 } from "lucide-react";
+import LogoSilapor from "../assets/LOGO_SILAPOR.png";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -33,10 +34,14 @@ export default function Profile() {
     <div className="min-h-screen bg-surface pb-12">
       <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
               <ArrowLeft className="w-6 h-6 text-on-surface" />
             </button>
+            <div className="relative w-10 h-10 flex items-center justify-center">
+              <div className="absolute inset-0 bg-surface-container-low rounded-xl shadow-sm"></div>
+              <img src={LogoSilapor} alt="SILAPOR" className="relative w-6 h-6 object-contain" />
+            </div>
             <h1 className="font-headline font-bold text-xl text-on-surface">Profile</h1>
           </div>
           <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
