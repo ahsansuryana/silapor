@@ -13,7 +13,6 @@ import {
   FileText,
 } from "lucide-react";
 import LogoSilapor from "../assets/LOGO_SILAPOR.png";
-import BottomNav from "../components/layout/BottomNav";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface pb-12">
       <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -51,7 +50,7 @@ export default function Profile() {
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto px-6 pt-8 pb-28 space-y-8">
+      <main className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
         <section className="flex flex-col items-center text-center space-y-4">
           <div className="relative">
             <div className="w-28 h-28 rounded-[2.5rem] overflow-hidden border-4 border-primary/10 shadow-xl">
@@ -137,8 +136,6 @@ export default function Profile() {
           </section>
         </div>
       </main>
-
-      <BottomNav />
     </div>
   );
 }

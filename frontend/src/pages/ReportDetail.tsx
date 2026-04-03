@@ -13,7 +13,6 @@ import {
   Send,
 } from "lucide-react";
 import LogoSilapor from "../assets/LOGO_SILAPOR.png";
-import BottomNav from "../components/layout/BottomNav";
 
 export default function ReportDetail() {
   const { id } = useParams();
@@ -44,7 +43,7 @@ export default function ReportDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface pb-12">
       <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -71,7 +70,7 @@ export default function ReportDetail() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 pt-6 pb-28 space-y-8">
+      <main className="max-w-3xl mx-auto px-6 pt-6 space-y-8">
         <div className={`p-6 rounded-[2rem] flex items-center justify-between ${
           report.status === "Resolved" ? "bg-primary-fixed/20 text-on-primary-fixed-variant" :
           report.status === "In Progress" ? "bg-secondary-container/20 text-on-secondary-container" :
@@ -198,8 +197,6 @@ export default function ReportDetail() {
           </button>
         </div>
       </main>
-
-      <BottomNav />
     </div>
   );
 }
