@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import ScreenHeader from "../components/ui/ScreenHeader";
 import TabSelector from "../components/ui/TabSelector";
 import StatusBadge from "../components/ui/StatusBadge";
+import BottomNav from "../components/layout/BottomNav";
 
 export default function MyReports() {
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ export default function MyReports() {
         }
       />
 
-      <main className="max-w-3xl mx-auto px-6 pt-6 pb-12 space-y-6">
+      <main className="max-w-3xl mx-auto px-6 pt-6 pb-28 space-y-6">
         <TabSelector
           options={tabs}
           active={activeTab}
@@ -165,6 +166,8 @@ export default function MyReports() {
           </div>
         )}
       </main>
+
+      <BottomNav />
     </div>
   );
 }

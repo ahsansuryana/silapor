@@ -6,6 +6,7 @@ import CreateReport from "../pages/CreateReport.tsx";
 import MyReports from "../pages/MyReports.tsx";
 import ReportDetail from "../pages/ReportDetail.tsx";
 import Profile from "../pages/Profile.tsx";
+import Notifications from "../pages/User/Notifications.tsx";
 import StaffDashboard from "../pages/staff/StaffDashboard.tsx";
 import StaffReportCenter from "../pages/staff/StaffReportCenter.tsx";
 import StaffManagement from "../pages/staff/StaffManagement.tsx";
@@ -33,6 +34,7 @@ function AppRoutes() {
       <Route path="/report/new" element={<CreateReport />} />
       <Route path="/reports" element={<MyReports />} />
       <Route path="/report/:id" element={<ReportDetail />} />
+      <Route path="/notifications" element={<Notifications />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/staff" element={<StaffDashboard />} />
       <Route path="/staff/reports" element={<StaffReportCenter />} />
