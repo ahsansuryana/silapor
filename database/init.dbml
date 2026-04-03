@@ -1,0 +1,90 @@
+// ─────────────────────────────────────────
+// SILAPOR - Database Schema (DBML)
+// Generated from init.sql
+// ─────────────────────────────────────────
+
+// Users: pelapor & admin
+Table users {
+  id        int [pk, increment]
+  nama      varchar(100) [not null]
+  email     varchar(100) [unique, not null]
+  password  varchar(255) [not null]
+  role      varchar(30) [not null, default: 'pelapor']
+  unit      varchar(100)
+  created_at timestamp [default: 'now()']
+}
+
+// Lokasi: gedung/ruangan yang dipetakan ke admin penanggung jawab
+Table lokasi {
+  id         int [pk, increment]
+  nama       varchar(100) [not null]
+  gedung     varchar(100)
+  fakultas   varchar(100)
+  level      varchar(20) [not null]
+  assigned_to int [ref: > users.id]
+  created_at timestamp [default: 'now()']
+}
+
+// Laporan: tiket kerusakan fasilitas
+Table laporan {
+  id          int [pk, increment]
+  nomor_tiket varchar(20) [unique, not null]
+  pelapor_id  int [not null, ref: > users.id]
+  lokasi_id   int [not null, ref: > lokasi.id]
+  jenis       varchar(100) [not null]
+  deskripsi   text
+  prioritas   varchar(10) [default: 'sedang']
+  foto_url    text
+  status      varchar(20) [default: 'menunggu']
+  assigned_to int [ref: > users.id]
+  created_at  timestamp [default: 'now()']
+  updated_at  timestamp [default: 'now()']
+}
+
+// Riwayat tiket: audit trail perjalanan tiket
+Table riwayat_tiket {
+  id          int [pk, increment]
+  laporan_id  int [not null, ref: > laporan.id]
+  dari_admin int [ref: > users.id]
+  ke_admin   int [ref: > users.id]
+  status_lama varchar(50)
+  status_baru varchar(50)
+  catatan     text
+  waktu       timestamp [default: 'now()']
+}
+
+// FCM Tokens: push notification
+Table fcm_tokens {
+  id         int [pk, increment]
+  user_id    int [unique, not null, ref: > users.id]
+  token      text [not null]
+  updated_at timestamp [default: 'now()']
+}
+
+// ─────────────────────────────────────────
+// RELASI
+// ─────────────────────────────────────────
+
+// Admin assigned ke lokasi
+Ref: users.id < lokasi.assigned_to
+
+// Pelapor membuat laporan
+Ref: users.id < laporan.pelapor_id
+
+// Admin assigned ke laporan
+Ref: users.id < laporan.assigned_to
+
+// Laporan发生在 lokasi
+Ref: lokasi.id < laporan.lokasi_id
+
+// Setiap perubahan tiket dicatat di riwayat
+Ref: laporan.id < riwayat_tiket.laporan_id
+
+// Dari admin di riwayat
+Ref: users.id < riwayat_tiket.dari_admin
+
+// Ke admin di riwayat
+Ref: users.id < riwayat_tiket.ke_admin
+
+// User punya FCM token
+Ref: users.id < fcm_tokens.user_id
