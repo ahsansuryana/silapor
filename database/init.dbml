@@ -65,26 +65,4 @@ Table fcm_tokens {
 // RELASI
 // ─────────────────────────────────────────
 
-// Admin assigned ke lokasi
-Ref: users.id < lokasi.assigned_to
-
-// Pelapor membuat laporan
-Ref: users.id < laporan.pelapor_id
-
-// Admin assigned ke laporan
-Ref: users.id < laporan.assigned_to
-
-// Laporan发生在 lokasi
-Ref: lokasi.id < laporan.lokasi_id
-
-// Setiap perubahan tiket dicatat di riwayat
-Ref: laporan.id < riwayat_tiket.laporan_id
-
-// Dari admin di riwayat
-Ref: users.id < riwayat_tiket.dari_admin
-
-// Ke admin di riwayat
-Ref: users.id < riwayat_tiket.ke_admin
-
-// User punya FCM token
-Ref: users.id < fcm_tokens.user_id
+// Relasi sudah didefinisikan inline di tiap kolom [ref: > ...]
