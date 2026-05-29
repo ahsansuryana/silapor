@@ -27,24 +27,19 @@ const PORT = Number(process.env.PORT) || 3000;
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
       const allowed = [
         frontendUrl,
-        "http://100.86.6.117:5173",
-        "http://100.86.6.117:3000",
-        "http://192.168.1.5:5173",
+        "http://localhost:5173",
+        "https://silapor.nuxantara.site",
+        "https://backend-silapor.nuxantara.site",
         "https://vite.nuxantara.site",
-        "https://express.nuxantara.site"
+        "https://express.nuxantara.site",
       ];
 
-      if (allowed.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
+      callback(null, allowed.includes(origin));
     },
     credentials: true,
   }),
