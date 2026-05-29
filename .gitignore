@@ -1,25 +1,73 @@
-# Environment
+# ──────────────────────────────────────
+# Environment variables
+# ──────────────────────────────────────
 .env
+.env.*
 !.env.example
+!.env.template
 
+# ──────────────────────────────────────
+# Credentials & secrets
+# ──────────────────────────────────────
+USER_CREDENTIALS.md
+firebase-service-account.json
+*.pem
+*.key
+
+# ──────────────────────────────────────
 # Dependencies
+# ──────────────────────────────────────
 node_modules/
+.pnp
+.pnp.js
 
+# ──────────────────────────────────────
 # Build output
+# ──────────────────────────────────────
 dist/
 build/
+*.tsbuildinfo
 
+# ──────────────────────────────────────
 # Logs
-*.log
+# ──────────────────────────────────────
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Firebase
-firebase-service-account.json
+# ──────────────────────────────────────
+# IDE / Editor
+# ──────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
 
-# OS
+# ──────────────────────────────────────
+# OS files
+# ──────────────────────────────────────
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# Docker volumes (jangan commit data db)
+# ──────────────────────────────────────
+# Docker
+# ──────────────────────────────────────
 db_data/
 minio_data/
+
+# ──────────────────────────────────────
+# Testing
+# ──────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ──────────────────────────────────────
+# Misc
+# ──────────────────────────────────────
+*.tgz
+.eslintcache
