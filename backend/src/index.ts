@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import authRoutes from "./routes/auth.route";
@@ -24,26 +23,31 @@ console.log(`[ENV] Loading ${envFile} mode`);
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  "http://localhost:5173",
+  "https://silapor.nuxantara.site",
+  "https://backend-silapor.nuxantara.site",
+  "https://vite.nuxantara.site",
+  "https://express.nuxantara.site",
+];
 
-      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-      const allowed = [
-        frontendUrl,
-        "http://localhost:5173",
-        "https://silapor.nuxantara.site",
-        "https://backend-silapor.nuxantara.site",
-        "https://vite.nuxantara.site",
-        "https://express.nuxantara.site",
-      ];
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+  }
 
-      callback(null, allowed.includes(origin));
-    },
-    credentials: true,
-  }),
-);
+  if (req.method === "OPTIONS") {
+    res.sendStatus(204);
+    return;
+  }
+
+  next();
+});
 app.use(cookieParser());
 app.use(express.json());
 
