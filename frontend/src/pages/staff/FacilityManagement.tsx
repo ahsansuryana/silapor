@@ -7,7 +7,6 @@ import {
   ChevronRight,
   ChevronDown,
   ArrowLeft,
-  MoreVertical,
   Edit2,
   Trash2,
   Eye,
@@ -17,6 +16,23 @@ import { motion, AnimatePresence } from "motion/react";
 import api from "../../lib/api";
 import ScreenHeader from "../../components/ui/ScreenHeader";
 import BottomNav from "../../components/layout/BottomNav";
+
+type LocationType = "UNIVERSITAS" | "FAKULTAS" | "JURUSAN" | "RUANGAN" | "AREA";
+
+interface LocationNode {
+  id: string;
+  name: string;
+  type: LocationType;
+  parent_id: string | null;
+  created_at: string;
+  updated_at: string | null;
+  children: LocationNode[];
+}
+
+interface BreadcrumbItem {
+  id: string | null;
+  name: string;
+}
 
 export default function FacilityManagement() {
   const navigate = useNavigate();
