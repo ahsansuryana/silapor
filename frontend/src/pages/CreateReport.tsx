@@ -276,67 +276,30 @@ export default function CreateReport() {
               </label>
               
               <div className="space-y-3">
-                <div className="relative">
-                  <select
-                    value={locationPath[0] || ""}
-                    onChange={(e) => handleLocationSelect(0, e.target.value)}
-                    className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                  >
-                    <option value="">
-                      Pilih lokasi...
-                    </option>
-                    {getFirstLevelLocations().map((loc) => (
-                      <option key={loc.id} value={loc.id}>
-                        {loc.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
-                </div>
-
-                {selectedLocations[0] && getChildLocations(selectedLocations[0].id).length > 0 && (
-                  <div className="relative">
+                {selectedLocations.map((loc, idx) => (
+                  <div key={idx} className="relative">
                     <select
-                      value={locationPath[1] || ""}
+                      value={locationPath[idx] || ""}
                       onChange={(e) => {
-                        if (e.target.value) handleLocationSelect(1, e.target.value);
+                        if (e.target.value) handleLocationSelect(idx, e.target.value);
                       }}
                       className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     >
                       <option value="">
-                        Pilih sub lokasi...
+                        {idx === 0 ? "Pilih lokasi..." : "Pilih sub lokasi..."}
                       </option>
-                      {getChildLocations(selectedLocations[0].id).map((loc) => (
-                        <option key={loc.id} value={loc.id}>
-                          {loc.name}
+                      {(idx === 0
+                        ? getFirstLevelLocations()
+                        : getChildLocations(selectedLocations[idx - 1].id)
+                      ).map((child) => (
+                        <option key={child.id} value={child.id}>
+                          {child.name}
                         </option>
                       ))}
                     </select>
                     <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
                   </div>
-                )}
-
-                {selectedLocations[1] && getChildLocations(selectedLocations[1].id).length > 0 && (
-                  <div className="relative">
-                    <select
-                      value={locationPath[2] || ""}
-                      onChange={(e) => {
-                        if (e.target.value) handleLocationSelect(2, e.target.value);
-                      }}
-                      className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                    >
-                      <option value="">
-                        Pilih sub lokasi...
-                      </option>
-                      {getChildLocations(selectedLocations[1].id).map((loc) => (
-                        <option key={loc.id} value={loc.id}>
-                          {loc.name}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
-                  </div>
-                )}
+                ))}
               </div>
             </div>
 
