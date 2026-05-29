@@ -1,40 +1,76 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
   Clock,
   CheckCircle2,
   AlertCircle,
   LayoutGrid,
-  Users,
-  Building2,
-  Megaphone,
   TrendingUp,
   BarChart3,
   Calendar,
+  ArrowRight,
+  Users,
 } from "lucide-react";
 import { motion } from "motion/react";
+import api from "../../lib/api";
 import ScreenHeader from "../../components/ui/ScreenHeader";
+import { getRoleFromToken } from "../../lib/jwt";
+import BottomNav from "../../components/layout/BottomNav";
 
 export default function StaffDashboard() {
+  const [stats, setStats] = useState({
+    active: 0,
+    pending: 0,
+    resolved: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [recentReports, setRecentReports] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const role = getRoleFromToken();
+  const isAdmin = role === "ADMIN";
 
-  const stats = [
+  const fetchDashboardData = async () => {
+    try {
+      const [allReports, myTasks] = await Promise.all([
+        api.get('/reports'),
+        api.get('/assignments/my-tasks'),
+      ]);
+
+      const reports = allReports.data || [];
+      const tasks = myTasks.data || [];
+
+      const active = reports.filter((r: any) => r.status === 'diproses').length;
+      const pending = reports.filter((r: any) => r.status === 'menunggu').length;
+      const resolved = reports.filter((r: any) => r.status === 'selesai').length;
+
+      setStats({ active, pending, resolved });
+      setRecentReports(reports.slice(0, 5));
+    } catch (err) {
+      console.error('Failed to fetch dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const statCards = [
     {
       label: "Active Reports",
-      value: "42",
+      value: stats.active.toString(),
       icon: <Clock className="w-5 h-5" />,
       color: "bg-secondary-container/20 text-on-secondary-container",
     },
     {
-      label: "Staff Online",
-      value: "18",
-      icon: <Users className="w-5 h-5" />,
-      color: "bg-primary/10 text-primary",
-    },
-    {
       label: "Pending Tasks",
-      value: "07",
+      value: stats.pending.toString().padStart(2, '0'),
       icon: <AlertCircle className="w-5 h-5" />,
       color: "bg-tertiary-container/20 text-on-tertiary-container",
+    },
+    {
+      label: "Resolved Today",
+      value: stats.resolved.toString(),
+      icon: <CheckCircle2 className="w-5 h-5" />,
+      color: "bg-primary/10 text-primary",
     },
   ];
 
@@ -45,28 +81,10 @@ export default function StaffDashboard() {
       path: "/staff/reports",
       color: "bg-primary text-white",
     },
-    {
-      label: "Management",
-      icon: <Users className="w-6 h-6" />,
-      path: "/staff/management",
-      color: "bg-surface-container-highest text-on-surface",
-    },
-    {
-      label: "Facility Info",
-      icon: <Building2 className="w-6 h-6" />,
-      path: "/staff/facility",
-      color: "bg-surface-container-highest text-on-surface",
-    },
-    {
-      label: "Broadcast",
-      icon: <Megaphone className="w-6 h-6" />,
-      path: "/staff/broadcast",
-      color: "bg-surface-container-highest text-on-surface",
-    },
   ];
 
   return (
-    <div className="min-h-screen bg-surface pb-24">
+    <div className="flex flex-col min-h-screen bg-surface">
       <ScreenHeader
         title="SILAPOR STAFF"
         subTitle="Admin Control Panel"
@@ -90,7 +108,8 @@ export default function StaffDashboard() {
         }
       />
 
-      <main className="max-w-6xl mx-auto px-6 pt-8 space-y-8">
+      <div className="flex-1 overflow-y-auto">
+        <main className="max-w-6xl mx-auto px-6 pt-8 space-y-8 pb-8">
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
             <h2 className="font-headline font-extrabold text-3xl text-on-surface tracking-tight">
@@ -107,29 +126,33 @@ export default function StaffDashboard() {
         </section>
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {stats.map((stat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm flex items-center gap-6"
-            >
-              <div
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.color}`}
+          {loading ? (
+            <div className="col-span-3 text-center py-8 text-on-surface-variant">Loading...</div>
+          ) : (
+            statCards.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm flex items-center gap-6"
               >
-                {stat.icon}
-              </div>
-              <div>
-                <p className="text-3xl font-headline font-extrabold text-on-surface leading-none mb-1">
-                  {stat.value}
-                </p>
-                <p className="font-label text-xs font-bold text-on-surface-variant uppercase tracking-widest">
-                  {stat.label}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                <div
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.color}`}
+                >
+                  {stat.icon}
+                </div>
+                <div>
+                  <p className="text-3xl font-headline font-extrabold text-on-surface leading-none mb-1">
+                    {stat.value}
+                  </p>
+                  <p className="font-label text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+                    {stat.label}
+                  </p>
+                </div>
+              </motion.div>
+            ))
+          )}
         </section>
 
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -148,6 +171,30 @@ export default function StaffDashboard() {
             </Link>
           ))}
         </section>
+
+        {isAdmin && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-primary/10 border border-primary/20 p-6 rounded-3xl flex items-center justify-between"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+                <LayoutGrid className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-headline font-bold text-on-surface">Admin Panel</h3>
+                <p className="text-xs text-on-surface-variant">Access staff management and facility configuration</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate("/admin")}
+              className="px-4 py-2 bg-primary text-white font-headline font-bold text-sm rounded-xl flex items-center gap-2"
+            >
+              Open Panel <ArrowRight className="w-4 h-4" />
+            </button>
+          </motion.section>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <section className="lg:col-span-2 bg-surface-container-lowest p-8 rounded-[2.5rem] border border-outline-variant/10 shadow-sm space-y-6">
@@ -219,10 +266,10 @@ export default function StaffDashboard() {
                   color: "bg-primary-fixed/20 text-on-primary-fixed-variant",
                 },
                 {
-                  user: "System",
-                  action: "Broadcast sent to all",
+                  user: "Admin",
+                  action: "Updated facility data",
                   time: "1h ago",
-                  icon: <Megaphone className="w-4 h-4" />,
+                  icon: <Users className="w-4 h-4" />,
                   color:
                     "bg-secondary-container/20 text-on-secondary-container",
                 },
@@ -252,7 +299,10 @@ export default function StaffDashboard() {
             </button>
           </section>
         </div>
-      </main>
+        </main>
+      </div>
+
+      <BottomNav />
     </div>
   );
 }

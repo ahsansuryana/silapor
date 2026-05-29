@@ -1,7 +1,11 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+const envFile = process.env.IS_GLOBAL === "true" ? ".env.global" : ".env";
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+
+console.log(`[DB] Loading config from ${envFile}`);
 
 const pool = new Pool({
   host: process.env.DB_HOST || "localhost",

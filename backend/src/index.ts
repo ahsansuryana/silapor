@@ -1,28 +1,94 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.routes";
+import path from "path";
+import authRoutes from "./routes/auth.route";
+import locationRoutes from "./routes/location.route";
+import categoriesRoutes from "./routes/categories.route";
+import reportsRoutes from "./routes/reports.route";
+import reportImagesRoutes from "./routes/report_images.route";
+import assignmentsRoutes from "./routes/assignments.route";
+import reportHistoryRoutes from "./routes/report_history.route";
+import notificationsRoutes from "./routes/notifications.route";
+import staffLocationsRoutes from "./routes/staff_locations.route";
+import staffRoutes from "./routes/staff.route";
+import usersRoutes from "./routes/users.route";
 import cookieParser from "cookie-parser";
-dotenv.config();
+
+const isGlobal = process.env.IS_GLOBAL === "true";
+const envFile = isGlobal ? ".env.global" : ".env";
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+
+console.log(`[ENV] Loading ${envFile} mode`);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const allowed = [
+        frontendUrl,
+        "http://100.86.6.117:5173",
+        "http://100.86.6.117:3000",
+        "http://192.168.1.5:5173",
+        "https://vite.nuxantara.site",
+        "https://express.nuxantara.site"
+      ];
+
+      if (allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
 app.use(cookieParser());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  const start = new Date();
+  const originalJson = res.json.bind(res);
+
+  res.json = (body) => {
+    const timestamp = new Date().toISOString();
+    console.log("[LOG]", timestamp, req.method, req.originalUrl);
+    console.log("[REQ] query:", JSON.stringify(req.query));
+    console.log("[REQ] body:", JSON.stringify(req.body));
+    console.log("[RES] status:", res.statusCode);
+    console.log("[RES] body:", JSON.stringify(body));
+    console.log(
+      "[LOG] duration:",
+      `${new Date().getTime() - start.getTime()}ms`,
+    );
+    return originalJson(body);
+  };
+
+  next();
+});
+
 app.get("/", (req, res) => {
   res.json({ message: "Hello from Silapor API!" });
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/categories", categoriesRoutes);
+app.use("/api/reports", reportsRoutes);
+app.use("/api/reports", reportImagesRoutes);
+app.use("/api/assignments", assignmentsRoutes);
+app.use("/api/reports", reportHistoryRoutes);
+app.use("/api/notifications", notificationsRoutes);
+app.use("/api/staff-locations", staffLocationsRoutes);
+app.use("/api/staff", staffRoutes);
+app.use("/api/users", usersRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
 });

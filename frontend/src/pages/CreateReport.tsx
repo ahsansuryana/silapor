@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Camera,
@@ -9,42 +9,167 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import api from "../lib/api";
 import ScreenHeader from "../components/ui/ScreenHeader";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface LocationNode {
+  id: string;
+  name: string;
+  type: string;
+  parent_id: string | null;
+  children?: LocationNode[];
+}
 
 export default function CreateReport() {
   const navigate = useNavigate();
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [locationPath, setLocationPath] = useState<string[]>([]);
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [locationTree, setLocationTree] = useState<LocationNode[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<LocationNode[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const categories = [
-    "Facility Maintenance",
-    "Electrical Issue",
-    "Plumbing & Water",
-    "IT & Connectivity",
-    "Security & Safety",
-    "Janitorial Services",
-    "Other",
-  ];
+  useEffect(() => {
+    fetchCategories();
+    fetchLocationTree();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await api.get('/categories');
+      setCategories(data);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
+
+  const fetchLocationTree = async () => {
+    try {
+      const { data } = await api.get('/locations/tree');
+      setLocationTree(data);
+    } catch (err) {
+      console.error('Failed to fetch locations:', err);
+    }
+  };
+
+  const getFirstLevelLocations = () => {
+    return locationTree.map(loc => ({ id: loc.id, name: loc.name, type: loc.type }));
+  };
+
+  const getChildLocations = (parentId: string) => {
+    const findChildren = (nodes: LocationNode[]): LocationNode[] => {
+      for (const node of nodes) {
+        if (node.id === parentId) return node.children || [];
+        if (node.children) {
+          const found = findChildren(node.children);
+          if (found.length > 0) return found;
+        }
+      }
+      return [];
+    };
+    return findChildren(locationTree);
+  };
+
+  const handleLocationSelect = (index: number, locId: string) => {
+    const newPath = [...locationPath];
+    newPath[index] = locId;
+    newPath.length = index + 1;
+    setLocationPath(newPath);
+
+    const newSelected = [...selectedLocations];
+    if (index === 0) {
+      newSelected.length = 0;
+    }
+    newSelected[index] = {
+      id: locId,
+      name: getFirstLevelLocations().find(l => l.id === locId)?.name || '',
+      type: getFirstLevelLocations().find(l => l.id === locId)?.type || '',
+      parent_id: null
+    };
+    
+    const children = getChildLocations(locId);
+    if (children.length > 0) {
+      newSelected[index + 1] = {
+        id: '',
+        name: 'Pilih lokasi...',
+        type: '',
+        parent_id: locId
+      };
+    }
+    newSelected.length = index + 1 + (children.length > 0 ? 1 : 0);
+    setSelectedLocations(newSelected);
+  };
 
   const handleImageUpload = () => {
-    const mockImage = `https://picsum.photos/seed/${Math.random()}/400/300`;
-    setImages([...images, mockImage]);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    
+    const newImages = Array.from(files).slice(0, 5 - images.length);
+    setImages([...images, ...newImages]);
+    
+    newImages.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreviews(prev => [...prev, e.target?.result as string].slice(0, 5));
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+    setImagePreviews(imagePreviews.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const getSelectedLocationId = () => {
+    const lastSelected = locationPath.filter(id => id);
+    return lastSelected[lastSelected.length - 1] || locationPath[0];
+  };
+
+  if (!categoryId || !getSelectedLocationId() || !title || !description) {
+    alert('Mohon lengkapi semua form');
+    return;
+  }
+    
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('category_id', categoryId);
+      formData.append('location_id', getSelectedLocationId());
+      
+      images.forEach(img => {
+        formData.append('file', img);
+      });
+
+      await api.post('/reports', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
       navigate("/reports");
-    }, 2000);
+    } catch (err) {
+      console.error('Failed to submit report:', err);
+      alert('Gagal mengirim laporan');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -65,7 +190,7 @@ export default function CreateReport() {
 
             <div className="grid grid-cols-3 gap-3">
               <AnimatePresence>
-                {images.map((img, idx) => (
+                {imagePreviews.map((img, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -90,18 +215,28 @@ export default function CreateReport() {
               </AnimatePresence>
 
               {images.length < 5 && (
-                <button
-                  type="button"
-                  onClick={handleImageUpload}
-                  className="aspect-square rounded-2xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center gap-2 hover:bg-surface-container-low hover:border-primary/30 transition-all group"
-                >
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Camera className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
-                    Add Photo
-                  </span>
-                </button>
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleImageUpload}
+                    className="aspect-square rounded-2xl border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center gap-2 hover:bg-surface-container-low hover:border-primary/30 transition-all group"
+                  >
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Camera className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+                      Add Photo
+                    </span>
+                  </button>
+                </>
               )}
             </div>
             <p className="text-[11px] text-on-surface-variant/60 flex items-center gap-1.5">
@@ -118,16 +253,16 @@ export default function CreateReport() {
               <div className="relative">
                 <select
                   required
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
                   className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                 >
                   <option value="" disabled>
                     Select a category
                   </option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
                     </option>
                   ))}
                 </select>
@@ -137,21 +272,86 @@ export default function CreateReport() {
 
             <div className="space-y-1.5">
               <label className="font-label text-sm font-bold text-on-surface-variant ml-1">
-                Location
+                Lokasi
               </label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                  <MapPin className="w-5 h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+              
+              <div className="space-y-3">
+                <div className="relative">
+                  <select
+                    value={locationPath[0] || ""}
+                    onChange={(e) => handleLocationSelect(0, e.target.value)}
+                    className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                  >
+                    <option value="">
+                      Pilih lokasi...
+                    </option>
+                    {getFirstLevelLocations().map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
                 </div>
-                <input
-                  required
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g. Building A, 3rd Floor, Room 302"
-                  className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-2xl pl-12 pr-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                />
+
+                {selectedLocations[0] && getChildLocations(selectedLocations[0].id).length > 0 && (
+                  <div className="relative">
+                    <select
+                      value={locationPath[1] || ""}
+                      onChange={(e) => {
+                        if (e.target.value) handleLocationSelect(1, e.target.value);
+                      }}
+                      className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    >
+                      <option value="">
+                        Pilih sub lokasi...
+                      </option>
+                      {getChildLocations(selectedLocations[0].id).map((loc) => (
+                        <option key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
+                  </div>
+                )}
+
+                {selectedLocations[1] && getChildLocations(selectedLocations[1].id).length > 0 && (
+                  <div className="relative">
+                    <select
+                      value={locationPath[2] || ""}
+                      onChange={(e) => {
+                        if (e.target.value) handleLocationSelect(2, e.target.value);
+                      }}
+                      className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                    >
+                      <option value="">
+                        Pilih sub lokasi...
+                      </option>
+                      {getChildLocations(selectedLocations[1].id).map((loc) => (
+                        <option key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
+                  </div>
+                )}
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="font-label text-sm font-bold text-on-surface-variant ml-1">
+                Title
+              </label>
+              <input
+                required
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. AC tidak dingin"
+                className="w-full bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+              />
             </div>
 
             <div className="space-y-1.5">

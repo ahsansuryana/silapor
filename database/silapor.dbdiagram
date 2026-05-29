@@ -1,0 +1,256 @@
+{
+  "version": "2.0.0",
+  "darkMode": true,
+  "gridEnabling": true,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "tablePositions": [
+      {
+        "name": "users",
+        "schemaName": "public",
+        "x": 56,
+        "y": 160
+      },
+      {
+        "name": "locations",
+        "schemaName": "public",
+        "x": -336,
+        "y": 72
+      },
+      {
+        "name": "user_staff_location",
+        "schemaName": "public",
+        "x": 584,
+        "y": 48
+      },
+      {
+        "name": "categories",
+        "schemaName": "public",
+        "x": -320,
+        "y": 336
+      },
+      {
+        "name": "reports",
+        "schemaName": "public",
+        "x": -328,
+        "y": 608.1208869015227
+      },
+      {
+        "name": "report_images",
+        "schemaName": "public",
+        "x": 504,
+        "y": 784
+      },
+      {
+        "name": "staff_report_assigments",
+        "schemaName": "public",
+        "x": 528.384769539078,
+        "y": 320
+      },
+      {
+        "name": "report_status_history",
+        "schemaName": "public",
+        "x": 840,
+        "y": 248
+      },
+      {
+        "name": "notifications",
+        "schemaName": "public",
+        "x": 144,
+        "y": 600
+      },
+      {
+        "name": "report_comments",
+        "schemaName": "public",
+        "x": 968,
+        "y": 624
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "staff_location_assignments",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "locations",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "staff_location_assignments",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "reports",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "locations",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "reports",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "categories",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "reports",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "reports",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "report_images",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "reports",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "report_assignments",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "report_assignments",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "reports",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "report_status_history",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "report_status_history",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "users",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "notifications",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          ""
+        ],
+        "firstTableName": "reports",
+        "firstSchemaName": "public",
+        "firstRelation": "1",
+        "secondFieldNames": [
+          ""
+        ],
+        "secondTableName": "notifications",
+        "secondSchemaName": "public",
+        "secondRelation": "*",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}

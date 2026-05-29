@@ -1,0 +1,146 @@
+// SILAPOR - Sistem Pelaporan Kerusakan Fasilitas Kampus
+// https://dbdiagram.io
+
+Table users {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255)
+  avatar_url varchar(255)
+  avatar_file_id varchar(255)
+  "NIM" varchar(255)
+  password varchar(255)
+  email varchar(255) [unique]
+  role role_type [not null, default: 'MAHASISWA']
+  is_google boolean [default: false]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+}
+
+Table locations {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null]
+  type location_type [not null]
+  parent_id uuid [ref: > locations.id]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+
+  note: 'Hierarki: UNIVERSITAS > FAKULTAS > JURUSAN > RUANGAN/AREA'
+}
+
+Table user_staff_location {
+  id uuid [pk, default: `gen_random_uuid()`]
+  staff_id uuid [not null, ref: > users.id]
+  location_id uuid [not null, ref: > locations.id]
+  created_at timestamp [not null, default: `now()`]
+
+  indexes {
+    (staff_id, location_id) [unique]
+  }
+
+  note: 'Mapping staff ke lokasi yang jadi wewenangnya'
+}
+
+Table categories {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(255) [not null, unique]
+  short_description text
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+
+  note: 'Contoh: Listrik, Plumbing, Furnitur, AC, Jaringan'
+}
+
+Table reports {
+  id uuid [pk, default: `gen_random_uuid()`]
+  reporter_id uuid [not null, ref: > users.id]
+  location_id uuid [ref: > locations.id]
+  category_id uuid [not null, ref: > categories.id]
+  title varchar(255) [not null]
+  description text
+  status report_status [not null, default: 'menunggu']
+  priority report_priority [not null, default: 'rendah']
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+}
+
+Table report_images {
+  id uuid [pk, default: `gen_random_uuid()`]
+  report_id uuid [not null, ref: > reports.id]
+  minio_object_key varchar(255) [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+}
+
+Table staff_report_assigments {
+  id uuid [pk, default: `gen_random_uuid()`]
+  report_id uuid [not null, ref: > reports.id]
+  assigned_to uuid [not null, ref: > users.id, note: 'Staff yang menerima laporan']
+  assigned_by uuid [ref: > users.id, note: 'Staff/Admin yang assign']
+  is_active boolean [not null]
+  is_auto_assign boolean [default: false]
+  notes text [default: '']
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+
+  note: 'Setiap transfer/eskalasi = row baru. is_active lama di-set false.'
+}
+
+Table report_status_history {
+  id uuid [pk, default: `gen_random_uuid()`]
+  report_id uuid [not null, ref: > reports.id]
+  change_by uuid [not null, ref: > users.id]
+  old_status report_status
+  new_status report_status [not null]
+  notes text
+  changed_at timestamp [not null, default: `now()`]
+  created_at timestamp [not null, default: `now()`]
+  updated_dt timestamp
+}
+
+Table notifications {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > users.id]
+  report_id uuid [not null, ref: > reports.id]
+  title varchar(255)
+  body text
+  is_read boolean
+  sent_at timestamp [not null, default: `now()`]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+}
+
+Table report_comments {
+  id uuid [pk, default: `gen_random_uuid()`]
+  report_id uuid [not null, ref: > reports.id]
+  user_id uuid [not null, ref: > users.id]
+  message text [not null]
+  created_at timestamp [not null, default: `now()`]
+}
+
+// Enum definitions
+Enum role_type {
+  MAHASISWA
+  STAFF
+  ADMIN
+}
+
+Enum location_type {
+  UNIVERSITAS
+  FAKULTAS
+  JURUSAN
+  RUANGAN
+  AREA
+}
+
+Enum report_status {
+  menunggu
+  diterima
+  diproses
+  selesai
+  ditolak
+}
+
+Enum report_priority {
+  rendah
+  sedang
+  tinggi
+}

@@ -1,164 +1,241 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
-  ArrowLeft,
-  Shield,
-  Users,
+  Bell,
+  Clock,
+  CheckCircle2,
   AlertCircle,
-  Settings,
-  Database,
-  Lock,
-  ChevronRight,
+  LayoutGrid,
+  Users,
+  User,
+  Building2,
+  TrendingUp,
+  Calendar,
+  ArrowRight,
 } from "lucide-react";
 import { motion } from "motion/react";
+import api from "../../lib/api";
+import ScreenHeader from "../../components/ui/ScreenHeader";
+import BottomNav from "../../components/layout/BottomNav";
+
+interface Stats {
+  total: number;
+  pending: number;
+  inProgress: number;
+  resolved: number;
+  percentage: number;
+}
 
 export default function AdminOverview() {
-  const navigate = useNavigate();
+  const [stats, setStats] = useState<Stats>({ total: 0, pending: 0, inProgress: 0, resolved: 0, percentage: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const systemStats = [
-    { label: "Total Users", value: "12.4k", change: "+5%", icon: <Users className="w-5 h-5" />, color: "bg-primary/10 text-primary" },
-    { label: "System Health", value: "99.9%", change: "Stable", icon: <Shield className="w-5 h-5" />, color: "bg-primary-fixed/20 text-on-primary-fixed-variant" },
-    { label: "Storage Used", value: "42.5 GB", change: "65%", icon: <Database className="w-5 h-5" />, color: "bg-secondary-container/20 text-on-secondary-container" },
-    { label: "Active Sessions", value: "842", change: "+12", icon: <Lock className="w-5 h-5" />, color: "bg-tertiary-container/20 text-on-tertiary-container" },
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const { data } = await api.get("/reports/stats");
+      setStats(data);
+    } catch (err) {
+      console.error("Failed to fetch stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const statCards = [
+    {
+      label: "Total Reports",
+      value: stats.total.toString(),
+      icon: <LayoutGrid className="w-5 h-5" />,
+      color: "bg-secondary-container/20 text-on-secondary-container",
+    },
+    {
+      label: "Pending",
+      value: (stats.pending + stats.inProgress).toString(),
+      icon: <Clock className="w-5 h-5" />,
+      color: "bg-tertiary-container/20 text-on-tertiary-container",
+    },
+    {
+      label: "Resolved",
+      value: stats.resolved.toString(),
+      icon: <CheckCircle2 className="w-5 h-5" />,
+      color: "bg-primary/10 text-primary",
+    },
   ];
 
-  const logs = [
-    { event: "Database Backup", status: "Success", time: "2h ago", user: "System" },
-    { event: "Security Patch v2.4.1", status: "Applied", time: "5h ago", user: "Admin" },
-    { event: "New Staff Account", status: "Verified", time: "8h ago", user: "Ani W." },
-    { event: "API Key Rotation", status: "Success", time: "12h ago", user: "System" },
+  const quickActions = [
+    {
+      label: "Staff Reports",
+      icon: <LayoutGrid className="w-6 h-6" />,
+      path: "/admin/reports",
+      color: "bg-primary text-white",
+    },
+    {
+      label: "Users",
+      icon: <User className="w-6 h-6" />,
+      path: "/admin/users",
+      color: "bg-surface-container-highest text-on-surface",
+    },
+    {
+      label: "Staff",
+      icon: <Users className="w-6 h-6" />,
+      path: "/admin/management",
+      color: "bg-surface-container-highest text-on-surface",
+    },
+    {
+      label: "Facility",
+      icon: <Building2 className="w-6 h-6" />,
+      path: "/admin/facility",
+      color: "bg-surface-container-highest text-on-surface",
+    },
+  ];
+
+  const recentActivity = [
+    {
+      user: "Budi (Staff)",
+      action: "Assigned to RPT-8821",
+      time: "5m ago",
+      icon: <Users className="w-4 h-4" />,
+      color: "bg-primary/10 text-primary",
+    },
+    {
+      user: "System",
+      action: "New report RPT-8825",
+      time: "12m ago",
+      icon: <AlertCircle className="w-4 h-4" />,
+      color: "bg-error/10 text-error",
+    },
+    {
+      user: "Ani (Staff)",
+      action: "Resolved RPT-8810",
+      time: "45m ago",
+      icon: <CheckCircle2 className="w-4 h-4" />,
+      color: "bg-primary-fixed/20 text-on-primary-fixed-variant",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-surface pb-12">
-      <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate("/staff")} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <ArrowLeft className="w-6 h-6 text-on-surface" />
+    <div className="flex flex-col min-h-screen bg-surface">
+      <ScreenHeader
+        title="ADMIN PANEL"
+        subTitle="Super Administrator"
+        rightActions={
+          <>
+            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors relative">
+              <Bell className="w-5 h-5 text-on-surface-variant" />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
             </button>
-            <h1 className="font-headline font-bold text-xl text-on-surface">Super Admin Overview</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <Settings className="w-5 h-5 text-on-surface-variant" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-6 pt-8 space-y-8">
-        <section className="bg-on-surface p-8 rounded-[2.5rem] text-surface flex flex-col md:flex-row justify-between items-center gap-6 shadow-2xl shadow-on-surface/20">
-          <div className="space-y-2 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">System Status</span>
-            </div>
-            <h2 className="font-headline font-extrabold text-3xl tracking-tight">All Systems Operational</h2>
-            <p className="text-sm opacity-60 max-w-md">The SILAPOR infrastructure is running optimally. No critical issues detected in the last 24 hours.</p>
-          </div>
-          <div className="flex gap-4">
-            <div className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl text-center">
-              <p className="text-2xl font-headline font-extrabold">24ms</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Latency</p>
-            </div>
-            <div className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl text-center">
-              <p className="text-2xl font-headline font-extrabold">0%</p>
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Error Rate</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {systemStats.map((stat, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm"
+            <Link
+              to="/profile"
+              className="w-10 h-10 rounded-full overflow-hidden border-2 border-on-surface/20 hover:border-on-surface transition-all"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-2.5 rounded-xl ${stat.color}`}>
+              <img
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </Link>
+          </>
+        }
+      />
+
+      <div className="flex-1 overflow-y-auto">
+        <main className="max-w-6xl mx-auto px-6 pt-8 pb-8 space-y-8">
+          <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <h2 className="font-headline font-extrabold text-3xl text-on-surface tracking-tight">
+                System Overview
+              </h2>
+              <p className="font-body text-on-surface-variant">
+                Manage users, facilities, and system configuration.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-xl text-xs font-bold text-on-surface-variant">
+              <Calendar className="w-4 h-4" />
+              May 4, 2026
+            </div>
+          </section>
+
+          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {statCards.map((stat, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm flex items-center gap-6"
+              >
+                <div
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.color}`}
+                >
                   {stat.icon}
                 </div>
-                <span className="text-xs font-bold text-primary">{stat.change}</span>
-              </div>
-              <p className="text-2xl font-headline font-extrabold text-on-surface mb-1">{stat.value}</p>
-              <p className="font-label text-xs font-bold text-on-surface-variant uppercase tracking-widest">{stat.label}</p>
-            </motion.div>
-          ))}
-        </section>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <section className="lg:col-span-2 space-y-6">
-            <div className="flex justify-between items-end">
-              <h3 className="font-headline font-bold text-xl text-on-surface">System Logs</h3>
-              <button className="text-xs font-bold text-primary hover:underline">View Full Logs</button>
-            </div>
-            <div className="bg-surface-container-lowest rounded-[2.5rem] border border-outline-variant/10 shadow-sm overflow-hidden">
-              <div className="divide-y divide-outline-variant/5">
-                {logs.map((log, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-6 hover:bg-surface-container-low/50 transition-colors group">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant">
-                        <Database className="w-5 h-5" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <h4 className="font-headline font-bold text-on-surface">{log.event}</h4>
-                        <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">By {log.user} • {log.time}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="px-3 py-1 bg-primary-fixed/20 text-on-primary-fixed-variant rounded-full text-[10px] font-bold uppercase tracking-widest">
-                        {log.status}
-                      </span>
-                      <ChevronRight className="w-5 h-5 text-outline-variant group-hover:text-primary transition-all" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+                <div>
+                  <p className="text-3xl font-headline font-extrabold text-on-surface leading-none mb-1">
+                    {stat.value}
+                  </p>
+                  <p className="font-label text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+                    {stat.label}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </section>
 
-          <section className="space-y-6">
-            <h3 className="font-headline font-bold text-xl text-on-surface">Quick Config</h3>
-            <div className="space-y-4">
-              <div className="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant">
-                      <Shield className="w-5 h-5" />
-                    </div>
-                    <span className="font-headline font-bold text-sm text-on-surface">Maintenance Mode</span>
-                  </div>
-                  <div className="w-12 h-6 bg-outline-variant/20 rounded-full relative cursor-pointer">
-                    <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all"></div>
-                  </div>
+          <section className="grid grid-cols-4 gap-4">
+            {quickActions.map((action, idx) => (
+              <Link
+                key={idx}
+                to={action.path}
+                className={`p-6 rounded-3xl flex flex-col items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm ${action.color}`}
+              >
+                <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                  {action.icon}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant">
-                      <AlertCircle className="w-5 h-5" />
-                    </div>
-                    <span className="font-headline font-bold text-sm text-on-surface">Public Reporting</span>
-                  </div>
-                  <div className="w-12 h-6 bg-primary rounded-full relative cursor-pointer">
-                    <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full transition-all"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 space-y-4">
-                <h4 className="font-headline font-bold text-primary text-sm">Security Alert</h4>
-                <p className="text-xs text-on-surface-variant leading-relaxed">There have been 3 failed login attempts from an unknown IP address in the last hour.</p>
-                <button className="w-full py-3 bg-primary text-white font-headline font-bold text-xs rounded-xl shadow-lg shadow-primary/10">
-                  Review Security
-                </button>
-              </div>
-            </div>
+                <span className="font-headline font-bold text-sm tracking-tight">
+                  {action.label}
+                </span>
+              </Link>
+            ))}
           </section>
-        </div>
-      </main>
+
+          <section className="bg-surface-container-lowest p-8 rounded-[2.5rem] border border-outline-variant/10 shadow-sm space-y-6">
+            <h3 className="font-headline font-bold text-xl text-on-surface">
+              Recent Activity
+            </h3>
+            <div className="space-y-6">
+              {recentActivity.map((activity, idx) => (
+                <div key={idx} className="flex gap-4">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${activity.color}`}
+                  >
+                    {activity.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-on-surface leading-tight">
+                      {activity.user}
+                    </p>
+                    <p className="text-xs text-on-surface-variant truncate">
+                      {activity.action}
+                    </p>
+                    <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest mt-1">
+                      {activity.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="w-full py-3 bg-surface-container-low text-on-surface-variant font-headline font-bold text-sm rounded-xl hover:bg-surface-container-high transition-all">
+              View All Activity
+            </button>
+          </section>
+        </main>
+      </div>
+
+      <BottomNav />
     </div>
   );
 }

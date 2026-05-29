@@ -7,8 +7,9 @@ export const authenticate = (
   next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith("Bearer "))
+  if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Token tidak ada" });
+  }
 
   const token = authHeader.split(" ")[1];
 
@@ -19,4 +20,16 @@ export const authenticate = (
   } catch {
     return res.status(403).json({ message: "Token tidak valid atau expired" });
   }
+};
+
+export const requireAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const user = (req as any).user;
+  if (!user || user.role !== "ADMIN") {
+    return res.status(403).json({ message: "Akses ditolak, hanya admin" });
+  }
+  next();
 };

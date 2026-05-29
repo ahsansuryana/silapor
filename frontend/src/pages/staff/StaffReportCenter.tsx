@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -10,31 +10,64 @@ import {
   MapPin,
 } from "lucide-react";
 import { motion } from "motion/react";
+import api from "../../lib/api";
 import LogoSilapor from "../../assets/LOGO_SILAPOR.png";
+import BottomNav from "../../components/layout/BottomNav";
 
 export default function StaffReportCenter() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("All");
+  const [reports, setReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedReport, setSelectedReport] = useState<any>(null);
 
-  const tabs = ["All", "New", "In Progress", "Resolved", "Archived"];
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
-  const reports = [
-    { id: "RPT-8821", title: "Broken AC in Room 302", status: "In Progress", date: "Mar 24, 2026", type: "Facility", location: "Building C", reporter: "Felix Alexander" },
-    { id: "RPT-8825", title: "Water Leak - Cafeteria", status: "New", date: "Mar 26, 2026", type: "Plumbing", location: "Student Center", reporter: "Sarah Jane" },
-    { id: "RPT-8819", title: "Leaking Pipe - Library", status: "Resolved", date: "Mar 22, 2026", type: "Plumbing", location: "Central Library", reporter: "Michael Chen" },
-    { id: "RPT-8815", title: "Flickering Lights - Hallway B", status: "In Progress", date: "Mar 20, 2026", type: "Electrical", location: "Building A", reporter: "David Smith" },
-    { id: "RPT-8798", title: "WiFi Connection Issues", status: "Resolved", date: "Mar 15, 2026", type: "IT", location: "Student Lounge", reporter: "Emily Wong" },
-  ];
+  const fetchReports = async () => {
+    try {
+      const { data } = await api.get('/assignments/my-tasks');
+      setReports(data || []);
+    } catch (err) {
+      console.error('Failed to fetch reports:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const filteredReports = activeTab === "All"
-    ? reports
-    : activeTab === "New"
-      ? reports.filter(r => r.status === "New")
-      : reports.filter(r => r.status === activeTab);
+  const mapStatus = (status: string) => {
+    switch (status) {
+      case 'menunggu': return 'New';
+      case 'diproses': return 'In Progress';
+      case 'selesai': return 'Resolved';
+      case 'diterima': return 'Accepted';
+      case 'ditolak': return 'Rejected';
+      default: return status;
+    }
+  };
+
+  const tabStatus: Record<string, string> = {
+    'All': '',
+    'New': 'menunggu',
+    'In Progress': 'diproses',
+    'Resolved': 'selesai',
+  };
+
+  const filteredReports = reports.filter((report: any) => {
+    const matchesTab = !activeTab || activeTab === 'All' || report.status === tabStatus[activeTab];
+    const matchesSearch = !searchQuery || 
+      report.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      report.id?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  const tabs = ["All", "New", "In Progress", "Resolved"];
 
   return (
-    <div className="min-h-screen bg-surface">
-      <header className="sticky top-0 z-50 glass-header border-b border-outline-variant/10 px-6 py-4">
+    <div className="flex flex-col min-h-screen bg-surface">
+      <header className="sticky top-0 z-40 bg-surface border-b border-outline-variant/10 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={() => navigate("/staff")} className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
@@ -57,7 +90,8 @@ export default function StaffReportCenter() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-6 pt-6 pb-12 space-y-6">
+      <div className="flex-1 overflow-y-auto">
+        <main className="max-w-6xl mx-auto px-6 pt-6 pb-12 space-y-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -66,6 +100,8 @@ export default function StaffReportCenter() {
             <input
               type="text"
               placeholder="Search reports by ID, title, or reporter..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3.5 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl font-body text-sm text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
             />
           </div>
@@ -122,29 +158,33 @@ export default function StaffReportCenter() {
                 <div className="col-span-4 space-y-1">
                   <h3 className="font-headline font-bold text-on-surface group-hover:text-primary transition-colors">{report.title}</h3>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">{report.type}</span>
+                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
+                      {report.category_name || 'Report'}
+                    </span>
                     <span className="w-1 h-1 bg-outline-variant/30 rounded-full"></span>
-                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">{report.date}</span>
+                    <span className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest">
+                      {new Date(report.created_at).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
                 <div className="col-span-2 flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-surface-container-highest overflow-hidden">
-                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${report.reporter}`} alt="Reporter" />
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${report.reporter_id}`} alt="Reporter" />
                   </div>
-                  <span className="text-xs font-medium text-on-surface-variant">{report.reporter}</span>
+                  <span className="text-xs font-medium text-on-surface-variant">User</span>
                 </div>
                 <div className="col-span-2 flex items-center gap-1.5 text-xs text-on-surface-variant">
                   <MapPin className="w-3.5 h-3.5 opacity-40" />
-                  {report.location}
+                  {report.location_name || 'Unknown'}
                 </div>
                 <div className="col-span-2 flex items-center">
                   <div className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest ${
-                    report.status === "Resolved" ? "bg-primary-fixed/20 text-on-primary-fixed-variant" :
-                    report.status === "In Progress" ? "bg-secondary-container/20 text-on-secondary-container" :
-                    report.status === "New" ? "bg-error/10 text-error" :
+                    mapStatus(report.status) === "Resolved" ? "bg-primary-fixed/20 text-on-primary-fixed-variant" :
+                    mapStatus(report.status) === "In Progress" ? "bg-secondary-container/20 text-on-secondary-container" :
+                    mapStatus(report.status) === "New" ? "bg-error/10 text-error" :
                     "bg-surface-container-highest text-on-surface-variant"
                   }`}>
-                    {report.status}
+                    {mapStatus(report.status)}
                   </div>
                 </div>
                 <div className="col-span-1 flex justify-end items-center">
@@ -165,6 +205,9 @@ export default function StaffReportCenter() {
           </div>
         )}
       </main>
+        </div>
+
+      <BottomNav />
     </div>
   );
 }
