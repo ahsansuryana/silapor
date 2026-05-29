@@ -276,22 +276,35 @@ export default function CreateReport() {
               </label>
               
               <div className="space-y-3">
-                {selectedLocations.map((loc, idx) => (
+                <div className="relative">
+                  <select
+                    value={locationPath[0] || ""}
+                    onChange={(e) => {
+                      if (e.target.value) handleLocationSelect(0, e.target.value);
+                    }}
+                    className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                  >
+                    <option value="">Pilih lokasi...</option>
+                    {getFirstLevelLocations().map((child) => (
+                      <option key={child.id} value={child.id}>
+                        {child.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" />
+                </div>
+
+                {selectedLocations.slice(1).map((loc, idx) => (
                   <div key={idx} className="relative">
                     <select
-                      value={locationPath[idx] || ""}
+                      value={locationPath[idx + 1] || ""}
                       onChange={(e) => {
-                        if (e.target.value) handleLocationSelect(idx, e.target.value);
+                        if (e.target.value) handleLocationSelect(idx + 1, e.target.value);
                       }}
                       className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-2xl px-5 py-4 font-body text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                     >
-                      <option value="">
-                        {idx === 0 ? "Pilih lokasi..." : "Pilih sub lokasi..."}
-                      </option>
-                      {(idx === 0
-                        ? getFirstLevelLocations()
-                        : getChildLocations(selectedLocations[idx - 1].id)
-                      ).map((child) => (
+                      <option value="">Pilih sub lokasi...</option>
+                      {getChildLocations(selectedLocations[idx].id).map((child) => (
                         <option key={child.id} value={child.id}>
                           {child.name}
                         </option>
