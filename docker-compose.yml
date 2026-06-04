@@ -9,14 +9,43 @@ services:
       target: production
     container_name: silapor_backend
     restart: unless-stopped
-    env_file:
-      - ./backend/.env
     environment:
       NODE_ENV: production
       PORT: 3000
+
+      # Database
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+      # MinIO
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_PORT: ${MINIO_PORT}
+      MINIO_USER: ${MINIO_USER}
+      MINIO_PASSWORD: ${MINIO_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+
+      # JWT
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      ACCESS_TOKEN_EXPIRES: ${ACCESS_TOKEN_EXPIRES}
+      REFRESH_TOKEN_EXPIRES: ${REFRESH_TOKEN_EXPIRES}
+
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
+
+      # URLs
       CLIENT_URL: https://silapor.nuxantara.site
       FRONTEND_URL: https://silapor.nuxantara.site
-      GOOGLE_REDIRECT_URI: https://backend-silapor.nuxantara.site/api/auth/google/callback
+
+      # Firebase Admin
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
     ports:
       - "127.0.0.1:3000:3000"
     networks:
