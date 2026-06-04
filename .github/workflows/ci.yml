@@ -4,63 +4,12 @@ on:
   push:
     branches: [main]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/silapor-backend
-  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/silapor-frontend
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # ─── Backend ───────────────────────────
-      - name: Build & push backend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          target: production
-          platforms: linux/arm64
-          push: true
-          tags: ${{ env.IMAGE_BACKEND }}:latest,${{ env.IMAGE_BACKEND }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      # ─── Frontend ──────────────────────────
-      - name: Build & push frontend
-        uses: docker/build-push-action@v6
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          target: production
-          platforms: linux/arm64
-          push: true
-          tags: ${{ env.IMAGE_FRONTEND }}:latest,${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
-          build-args: |
-            VITE_API_BACKEND_URL=${{ vars.VITE_API_BACKEND_URL || 'https://backend-silapor.nuxantara.site' }}
-            VITE_BASE_URL=${{ vars.VITE_BASE_URL || 'https://silapor.nuxantara.site' }}
-            VITE_FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-            VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            VITE_FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
-            VITE_FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
-            VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-            VITE_FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-            VITE_FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Trigger deploy webhook
+        run: |
+          curl -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            --data-raw '{"ref":"${{ github.ref }}","commit":"${{ github.sha }}"}'
