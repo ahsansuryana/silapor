@@ -80,6 +80,12 @@ export default function CreateReport() {
     return findChildren(locationTree);
   };
 
+  const getLocationById = (parentId: string | null, targetId: string): { name: string; type: string } | null => {
+    const list = parentId ? getChildLocations(parentId) : getFirstLevelLocations();
+    const found = list.find(l => l.id === targetId);
+    return found ? { name: found.name, type: found.type } : null;
+  };
+
   const handleLocationSelect = (index: number, locId: string) => {
     const newPath = [...locationPath];
     newPath[index] = locId;
@@ -90,11 +96,13 @@ export default function CreateReport() {
     if (index === 0) {
       newSelected.length = 0;
     }
+    const parentId = index === 0 ? null : newPath[index - 1];
+    const loc = getLocationById(parentId, locId);
     newSelected[index] = {
       id: locId,
-      name: getFirstLevelLocations().find(l => l.id === locId)?.name || '',
-      type: getFirstLevelLocations().find(l => l.id === locId)?.type || '',
-      parent_id: null
+      name: loc?.name || '',
+      type: loc?.type || '',
+      parent_id: parentId
     };
     
     const children = getChildLocations(locId);
