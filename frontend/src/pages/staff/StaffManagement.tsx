@@ -467,68 +467,6 @@ export default function StaffManagement() {
                     )}
                   </div>
                 </div>
-                <div className="flex gap-4 pt-4">
-                  <button
-                    onClick={() => setShowEditModal(false)}
-                    className="flex-1 py-3 bg-surface-container-low text-on-surface font-bold rounded-xl"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleEditStaff}
-                    className="flex-1 py-3 bg-primary text-white font-bold rounded-xl"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="space-y-3 p-4 bg-surface-container-low rounded-xl">
-                    <div className="relative">
-                      <select
-                        value={locationPath[0] || ""}
-                        onChange={(e) => handleLocationSelect(0, e.target.value)}
-                        className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3 text-sm"
-                      >
-                        <option value="">Pilih lokasi...</option>
-                        {getFirstLevelLocations().map(loc => (
-                          <option key={loc.id} value={loc.id}>{loc.name}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
-                    </div>
-
-                    {Array.from({ length: locationPath.length }, (_, idx) => (
-                      idx > 0 && locationPath[idx - 1] && getChildLocations(locationPath[idx - 1]).length > 0 && (
-                        <div key={idx} className="relative">
-                          <select
-                            value={locationPath[idx] || ""}
-                            onChange={(e) => { if (e.target.value) handleLocationSelect(idx, e.target.value); }}
-                            className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3 text-sm"
-                          >
-                            <option value="">Pilih sub lokasi...</option>
-                            {getChildLocations(locationPath[idx - 1]).map(loc => (
-                              <option key={loc.id} value={loc.id}>{loc.name}</option>
-                            ))}
-                          </select>
-                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
-                        </div>
-                      )
-                    ))}
-
-                    {tempSelectedLocation && (
-                      <button
-                        type="button"
-                        onClick={addLocation}
-                        className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary/20"
-                      >
-                        + Tambah Lokasi
-                      </button>
-                    )}
-                  </div>
-                </div>
                 
                 <button
                   onClick={handleAddStaff}
@@ -625,37 +563,23 @@ export default function StaffManagement() {
                       <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
                     </div>
 
-                    {locationPath[0] && getChildLocations(locationPath[0]).length > 0 && (
-                      <div className="relative">
-                        <select
-                          value={locationPath[1] || ""}
-                          onChange={(e) => { if (e.target.value) handleLocationSelect(1, e.target.value); }}
-                          className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3 text-sm"
-                        >
-                          <option value="">Pilih sub lokasi...</option>
-                          {getChildLocations(locationPath[0]).map(loc => (
-                            <option key={loc.id} value={loc.id}>{loc.name}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
-                      </div>
-                    )}
-
-                    {locationPath[1] && getChildLocations(locationPath[1]).length > 0 && (
-                      <div className="relative">
-                        <select
-                          value={locationPath[2] || ""}
-                          onChange={(e) => { if (e.target.value) handleLocationSelect(2, e.target.value); }}
-                          className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3 text-sm"
-                        >
-                          <option value="">Pilih sub lokasi...</option>
-                          {getChildLocations(locationPath[1]).map(loc => (
-                            <option key={loc.id} value={loc.id}>{loc.name}</option>
-                          ))}
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
-                      </div>
-                    )}
+                    {Array.from({ length: locationPath.length }, (_, idx) => (
+                      idx > 0 && locationPath[idx - 1] && getChildLocations(locationPath[idx - 1]).length > 0 && (
+                        <div key={idx} className="relative">
+                          <select
+                            value={locationPath[idx] || ""}
+                            onChange={(e) => { if (e.target.value) handleLocationSelect(idx, e.target.value); }}
+                            className="w-full appearance-none bg-surface-container-lowest border border-outline-variant/20 rounded-xl px-4 py-3 text-sm"
+                          >
+                            <option value="">Pilih sub lokasi...</option>
+                            {getChildLocations(locationPath[idx - 1]).map(loc => (
+                              <option key={loc.id} value={loc.id}>{loc.name}</option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant pointer-events-none" />
+                        </div>
+                      )
+                    ))}
 
                     {tempSelectedLocation && (
                       <button
