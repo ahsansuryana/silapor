@@ -185,7 +185,11 @@ export default function StaffManagement() {
   const handleLocationSelect = (index: number, locId: string) => {
     const newPath = [...locationPath];
     newPath[index] = locId;
-    newPath.length = index + 1;
+    const children = getChildLocations(locId);
+    if (children.length > 0) {
+      newPath[index + 1] = '';
+    }
+    newPath.length = index + 1 + (children.length > 0 ? 1 : 0);
     setLocationPath(newPath);
 
     const locName = index === 0 
