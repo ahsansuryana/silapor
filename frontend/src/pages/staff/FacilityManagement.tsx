@@ -452,19 +452,28 @@ export default function FacilityManagement() {
                 <option value="AREA">Area</option>
               </select>
             </div>
-            <div>
-              <label className="text-sm font-bold text-on-surface-variant">Parent</label>
-              <select
-                value={formData.parent_id}
-                onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
-                className="w-full mt-1 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/20"
-              >
-                <option value="">None (Root)</option>
-                {locationTree.map((loc: LocationNode) => (
-                  <option key={loc.id} value={loc.id}>{loc.name}</option>
-                ))}
-              </select>
-            </div>
+            {currentParent ? (
+              <div>
+                <label className="text-sm font-bold text-on-surface-variant">Parent (otomatis)</label>
+                <div className="w-full mt-1 p-3 bg-surface-container-low rounded-xl border border-outline-variant/20 text-on-surface-variant text-sm">
+                  {breadcrumb[breadcrumb.length - 1]?.name || "Unknown"}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="text-sm font-bold text-on-surface-variant">Parent</label>
+                <select
+                  value={formData.parent_id}
+                  onChange={(e) => setFormData({ ...formData, parent_id: e.target.value })}
+                  className="w-full mt-1 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/20"
+                >
+                  <option value="">None (Root)</option>
+                  {locationTree.map((loc: LocationNode) => (
+                    <option key={loc.id} value={loc.id}>{loc.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setShowAddModal(false)}
