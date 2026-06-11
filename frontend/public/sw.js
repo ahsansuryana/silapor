@@ -14,13 +14,11 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body } = payload.notification || {};
-  const data = payload.data || {};
-
   self.registration.showNotification(title || 'SILAPOR', {
     body: body || '',
     icon: '/LOGO_SILAPOR.png',
-    data: { url: data.url || '/notifications' },
     badge: '/LOGO_SILAPOR.png',
+    data: { url: payload.data?.url || '/notifications' },
   });
 });
 
@@ -28,28 +26,29 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const url = event.notification.data?.url || '/notifications';
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      for (const client of clientList) {
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
-          client.postMessage({ type: 'FCM_CLICK', url });
           return client.focus();
         }
       }
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
+      if (clients.openWindow) return clients.openWindow(url);
     }),
   );
 });
 
-// ─────────────────────────────────────────
-// PWA - Cache static assets
-// ─────────────────────────────────────────
-const CACHE_NAME = 'silapor-v1';
-const STATIC_ASSETS = [
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+const CACHE = 'silapor-v2';
+const SHELL = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/offline.html',
   '/LOGO_SILAPOR.png',
   '/vite.svg',
   '/icons/icon-192.svg',
@@ -60,32 +59,42 @@ const STATIC_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    }),
+    caches.open(CACHE).then((c) => c.addAll(SHELL)),
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)));
-    }),
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
+    ).then(() => clients.claim()),
   );
-  clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('/api/')) return;
+
+  const url = new URL(event.request.url);
+
+  if (url.pathname === '/sw.js') return;
+  if (url.pathname.startsWith('/api/')) return;
+
+  if (event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        caches.match('/offline.html').then((r) => r || Response.error()),
+      ),
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
       return cached || fetch(event.request).then((response) => {
         if (response.ok && response.type === 'basic') {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          caches.open(CACHE).then((c) => c.put(event.request, clone));
         }
         return response;
       });

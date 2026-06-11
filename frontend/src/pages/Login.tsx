@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import api from "../lib/api";
 import { getUserFromToken } from "../lib/jwt";
-import { registerServiceWorker } from "../lib/register-sw";
-import { requestFcmToken, registerFcmToken, listenForForegroundMessages } from "../lib/fcm";
+import { requestFcmToken, registerFcmToken } from "../lib/fcm";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -28,11 +27,8 @@ export default function Login() {
       localStorage.setItem("access_token", data.accessToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      registerServiceWorker().then(() => {
-        requestFcmToken().then((fcmToken) => {
-          if (fcmToken) registerFcmToken(fcmToken);
-        });
-        listenForForegroundMessages();
+      requestFcmToken().then((fcmToken) => {
+        if (fcmToken) registerFcmToken(fcmToken);
       });
       
       // Redirect based on role
