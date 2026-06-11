@@ -1,17 +1,11 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-  Bell,
   Clock,
   CheckCircle2,
-  AlertCircle,
   LayoutGrid,
-  Users,
   User,
   Building2,
-  TrendingUp,
-  Calendar,
-  ArrowRight,
 } from "lucide-react";
 import { motion } from "motion/react";
 import api from "../../lib/api";
@@ -81,7 +75,7 @@ export default function AdminOverview() {
     },
     {
       label: "Staff",
-      icon: <Users className="w-6 h-6" />,
+      icon: <User className="w-6 h-6" />,
       path: "/admin/management",
       color: "bg-surface-container-highest text-on-surface",
     },
@@ -93,52 +87,22 @@ export default function AdminOverview() {
     },
   ];
 
-  const recentActivity = [
-    {
-      user: "Budi (Staff)",
-      action: "Assigned to RPT-8821",
-      time: "5m ago",
-      icon: <Users className="w-4 h-4" />,
-      color: "bg-primary/10 text-primary",
-    },
-    {
-      user: "System",
-      action: "New report RPT-8825",
-      time: "12m ago",
-      icon: <AlertCircle className="w-4 h-4" />,
-      color: "bg-error/10 text-error",
-    },
-    {
-      user: "Ani (Staff)",
-      action: "Resolved RPT-8810",
-      time: "45m ago",
-      icon: <CheckCircle2 className="w-4 h-4" />,
-      color: "bg-primary-fixed/20 text-on-primary-fixed-variant",
-    },
-  ];
-
   return (
     <div className="flex flex-col min-h-screen bg-surface">
       <ScreenHeader
         title="ADMIN PANEL"
         subTitle="Super Administrator"
         rightActions={
-          <>
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors relative">
-              <Bell className="w-5 h-5 text-on-surface-variant" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
-            </button>
-            <Link
-              to="/profile"
-              className="w-10 h-10 rounded-full overflow-hidden border-2 border-on-surface/20 hover:border-on-surface transition-all"
-            >
-              <img
-                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            </Link>
-          </>
+          <Link
+            to="/profile"
+            className="w-10 h-10 rounded-full overflow-hidden border-2 border-on-surface/20 hover:border-on-surface transition-all"
+          >
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin"
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </Link>
         }
       />
 
@@ -152,10 +116,6 @@ export default function AdminOverview() {
               <p className="font-body text-on-surface-variant">
                 Manage users, facilities, and system configuration.
               </p>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-surface-container-low rounded-xl text-xs font-bold text-on-surface-variant">
-              <Calendar className="w-4 h-4" />
-              May 4, 2026
             </div>
           </section>
 
@@ -200,37 +160,6 @@ export default function AdminOverview() {
                 </span>
               </Link>
             ))}
-          </section>
-
-          <section className="bg-surface-container-lowest p-8 rounded-[2.5rem] border border-outline-variant/10 shadow-sm space-y-6">
-            <h3 className="font-headline font-bold text-xl text-on-surface">
-              Recent Activity
-            </h3>
-            <div className="space-y-6">
-              {recentActivity.map((activity, idx) => (
-                <div key={idx} className="flex gap-4">
-                  <div
-                    className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${activity.color}`}
-                  >
-                    {activity.icon}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-on-surface leading-tight">
-                      {activity.user}
-                    </p>
-                    <p className="text-xs text-on-surface-variant truncate">
-                      {activity.action}
-                    </p>
-                    <p className="text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-widest mt-1">
-                      {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button className="w-full py-3 bg-surface-container-low text-on-surface-variant font-headline font-bold text-sm rounded-xl hover:bg-surface-container-high transition-all">
-              View All Activity
-            </button>
           </section>
         </main>
       </div>

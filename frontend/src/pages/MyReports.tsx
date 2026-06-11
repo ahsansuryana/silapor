@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Search,
-  Filter,
   ChevronRight,
   Calendar,
   AlertCircle,
@@ -123,14 +122,10 @@ export default function MyReports() {
           onChange={setActiveTab}
         />
 
-        <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
           <p className="text-xs font-bold text-on-surface-variant/60 uppercase tracking-widest">
             Showing {filteredReports.length} Reports
           </p>
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-lg text-xs font-bold text-on-surface-variant">
-            <Filter className="w-3.5 h-3.5" />
-            Sort by Date
-          </button>
         </div>
 
         <div className="space-y-4">

@@ -11,6 +11,7 @@ import {
   updateRole,
   registerFcmToken,
   deleteFcmToken,
+  updateProfile,
 } from "../controllers/auth.controller";
 import { authenticate, requireAdmin } from "../middlewares/auth.middleware";
 
@@ -24,6 +25,7 @@ router.post("/login", login);
 router.get("/google/redirect", googleRedirect);
 router.get("/google/callback", googleCallback);
 router.post("/refresh", refresh);
+router.put("/profile", authenticate, updateProfile);
 router.post("/logout", logout);
 router.post("/fcm-token", authenticate, registerFcmToken);
 router.delete("/fcm-token", authenticate, deleteFcmToken);

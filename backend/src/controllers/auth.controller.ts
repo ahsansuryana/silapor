@@ -200,6 +200,31 @@ export const refresh = (req: Request, res: Response) => {
   }
 };
 
+// ─── Profile ─────────────────────────────────────────────
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const { name, password } = req.body;
+
+  if (!name && !password) {
+    return res.status(400).json({ message: "Nama atau password harus diisi" });
+  }
+
+  try {
+    const updated = await UsersModel.update(user.id, { name, password });
+    if (!updated) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+    return res.json({
+      message: "Profile berhasil diupdate",
+      user: { id: updated.id, name: updated.name, role: updated.role },
+    });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    return res.status(500).json({ message: "Gagal update profile" });
+  }
+};
+
 // ─── Logout ─────────────────────────────────────────────
 
 export const logout = (_req: Request, res: Response) => {

@@ -2,12 +2,12 @@ importScripts('https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js'
 importScripts('https://www.gstatic.com/firebasejs/11.6.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: '___FIREBASE_API_KEY___',
-  authDomain: '___FIREBASE_AUTH_DOMAIN___',
-  projectId: '___FIREBASE_PROJECT_ID___',
-  storageBucket: '___FIREBASE_STORAGE_BUCKET___',
-  messagingSenderId: '___FIREBASE_MESSAGING_SENDER_ID___',
-  appId: '___FIREBASE_APP_ID___',
+  apiKey: 'AIzaSyAi7SZJlx2Az3_HD4NPCRlndmYSPqLq_vw',
+  authDomain: 'si-laporan-kerusakan.firebaseapp.com',
+  projectId: 'si-laporan-kerusakan',
+  storageBucket: 'si-laporan-kerusakan.firebasestorage.app',
+  messagingSenderId: '686107677786',
+  appId: '1:686107677786:web:7ed604af98d1e12086f463',
 });
 
 const messaging = firebase.messaging();

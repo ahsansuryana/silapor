@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   User,
-  Shield,
-  Bell,
-  Moon,
   LogOut,
+  X,
+  Loader2,
   ChevronRight,
-  Camera,
-  Settings,
-  HelpCircle,
-  FileText,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import api from "../lib/api";
 import LogoSilapor from "../assets/LOGO_SILAPOR.png";
 import BottomNav from "../components/layout/BottomNav";
 
 interface UserData {
+  id: string;
   name: string;
   role: string;
 }
@@ -26,13 +23,18 @@ export default function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserData | null>(null);
   const [stats, setStats] = useState({ total: 0, resolved: 0 });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchStats();
-    
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsed = JSON.parse(storedUser);
+      setUser(parsed);
+      setEditName(parsed.name || "");
     }
   }, []);
 
@@ -58,17 +60,25 @@ export default function Profile() {
     navigate('/login');
   };
 
-  const menuItems = [
-    { label: "Personal Information", icon: <User className="w-5 h-5" />, color: "text-primary" },
-    { label: "Notification Settings", icon: <Bell className="w-5 h-5" />, color: "text-secondary-container" },
-    { label: "Security & Privacy", icon: <Shield className="w-5 h-5" />, color: "text-on-primary-fixed-variant" },
-  ];
-
-  const supportItems = [
-    { label: "Help Center", icon: <HelpCircle className="w-5 h-5" /> },
-    { label: "Terms of Service", icon: <FileText className="w-5 h-5" /> },
-    { label: "Privacy Policy", icon: <Shield className="w-5 h-5" /> },
-  ];
+  const handleSaveProfile = async () => {
+    if (!editName.trim()) return;
+    setSaving(true);
+    try {
+      const body: any = { name: editName.trim() };
+      if (editPassword) body.password = editPassword;
+      const { data } = await api.put('/auth/profile', body);
+      const updatedUser: UserData = { id: user!.id, name: data.user.name, role: user!.role };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setShowEditModal(false);
+      setEditPassword("");
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      alert("Gagal update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-surface">
@@ -84,9 +94,6 @@ export default function Profile() {
             </div>
             <h1 className="font-headline font-bold text-xl text-on-surface">Profile</h1>
           </div>
-          <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-            <Settings className="w-5 h-5 text-on-surface-variant" />
-          </button>
         </div>
       </header>
 
@@ -95,11 +102,8 @@ export default function Profile() {
         <section className="flex flex-col items-center text-center space-y-4">
           <div className="relative">
             <div className="w-28 h-28 rounded-[2.5rem] overflow-hidden border-4 border-primary/10 shadow-xl">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="Profile" className="w-full h-full object-cover" />
+              <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'User'}`} alt="Profile" className="w-full h-full object-cover" />
             </div>
-            <button className="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-2xl flex items-center justify-center shadow-lg border-4 border-surface active:scale-90 transition-transform">
-              <Camera className="w-5 h-5" />
-            </button>
           </div>
           <div className="space-y-1">
             <h2 className="font-headline font-extrabold text-2xl text-on-surface tracking-tight">{user?.name || 'User'}</h2>
@@ -124,42 +128,20 @@ export default function Profile() {
 
         <div className="space-y-6">
           <section className="space-y-3">
-            <h3 className="font-headline font-bold text-sm text-on-surface-variant/60 uppercase tracking-widest ml-1">Account Settings</h3>
+            <h3 className="font-headline font-bold text-sm text-on-surface-variant/60 uppercase tracking-widest ml-1">Account</h3>
             <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 shadow-sm overflow-hidden">
-              {menuItems.map((item, idx) => (
-                <button
-                  key={idx}
-                  className="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-all group border-b border-outline-variant/5 last:border-0"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center ${item.color}`}>
-                      {item.icon}
-                    </div>
-                    <span className="font-headline font-bold text-on-surface">{item.label}</span>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary">
+                    <User className="w-5 h-5" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-outline-variant group-hover:text-primary transition-all" />
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section className="space-y-3">
-            <h3 className="font-headline font-bold text-sm text-on-surface-variant/60 uppercase tracking-widest ml-1">Support</h3>
-            <div className="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 shadow-sm overflow-hidden">
-              {supportItems.map((item, idx) => (
-                <button
-                  key={idx}
-                  className="w-full flex items-center justify-between p-5 hover:bg-surface-container-low transition-all group border-b border-outline-variant/5 last:border-0"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant">
-                      {item.icon}
-                    </div>
-                    <span className="font-headline font-bold text-on-surface">{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-outline-variant group-hover:text-primary transition-all" />
-                </button>
-              ))}
+                  <span className="font-headline font-bold text-on-surface">Edit Profile</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-outline-variant group-hover:text-primary transition-all" />
+              </button>
             </div>
           </section>
 
@@ -179,7 +161,66 @@ export default function Profile() {
       </main>
         </div>
 
+      <AnimatePresence>
+        {showEditModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-surface p-6 rounded-2xl w-full max-w-md"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-headline font-bold text-xl">Edit Profile</h2>
+                <button onClick={() => setShowEditModal(false)} className="w-8 h-8 rounded-lg hover:bg-surface-container-low">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block">Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/10 rounded-xl text-sm"
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2 block">New Password (optional)</label>
+                  <input
+                    type="password"
+                    value={editPassword}
+                    onChange={(e) => setEditPassword(e.target.value)}
+                    className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/10 rounded-xl text-sm"
+                    placeholder="Leave empty to keep current"
+                  />
+                </div>
+
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={saving || !editName.trim()}
+                  className="w-full py-3 bg-primary text-white font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {saving && <Loader2 className="w-5 h-5 animate-spin" />}
+                  Save Changes
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <BottomNav />
     </div>
   );
 }
+
+

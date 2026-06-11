@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Search,
-  Filter,
   ChevronRight,
-  MoreVertical,
-  Download,
   MapPin,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -79,14 +76,6 @@ export default function StaffReportCenter() {
             </div>
             <h1 className="font-headline font-bold text-xl text-on-surface">Report Center</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <Download className="w-5 h-5 text-on-surface-variant" />
-            </button>
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <MoreVertical className="w-5 h-5 text-on-surface-variant" />
-            </button>
-          </div>
         </div>
       </header>
 
@@ -104,15 +93,6 @@ export default function StaffReportCenter() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3.5 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl font-body text-sm text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all"
             />
-          </div>
-          <div className="flex gap-2">
-            <button className="flex items-center gap-2 px-6 py-3.5 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-all">
-              <Filter className="w-4 h-4" />
-              Filter
-            </button>
-            <button className="flex items-center gap-2 px-6 py-3.5 bg-on-surface text-surface rounded-2xl text-sm font-bold hover:opacity-90 transition-all">
-              Export CSV
-            </button>
           </div>
         </div>
 

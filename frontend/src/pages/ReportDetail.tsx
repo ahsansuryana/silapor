@@ -6,8 +6,6 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Share2,
-  MoreVertical,
   Calendar,
   User,
   XCircle,
@@ -186,14 +184,6 @@ export default function ReportDetail() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <Share2 className="w-5 h-5 text-on-surface-variant" />
-            </button>
-            <button className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors">
-              <MoreVertical className="w-5 h-5 text-on-surface-variant" />
-            </button>
-          </div>
         </div>
       </header>
 
@@ -292,12 +282,6 @@ export default function ReportDetail() {
           )}
         </section>
 
-        <div className="pt-8 border-t border-outline-variant/10">
-          <button className="w-full py-4 bg-surface-container-highest text-on-surface-variant font-headline font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container-highest/80 transition-all">
-            <AlertCircle className="w-5 h-5" />
-            Report an Issue with this Ticket
-          </button>
-        </div>
       </main>
     </div>
   );

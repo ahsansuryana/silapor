@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   Search,
   UserPlus,
-  MoreVertical,
   Mail,
   Edit2,
   Trash2,
@@ -220,9 +219,8 @@ export default function UserManagement() {
                       <Mail className="w-4 h-4 opacity-40" />
                       {user.email || "-"}
                     </div>
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="pt-2">
                       <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Mahasiswa</span>
-                      <button className="text-[10px] font-extrabold text-primary uppercase tracking-widest hover:underline">View Details</button>
                     </div>
                   </div>
                 </motion.div>
