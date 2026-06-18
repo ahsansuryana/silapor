@@ -36,7 +36,11 @@ export default function Login() {
         const prev = localStorage.getItem('fcm_token');
         if (token !== prev) {
           localStorage.setItem('fcm_token', token);
-          api.post('/auth/fcm-token', { token, device_type: 'web' });
+          await api.post('/auth/fcm-token', {
+            token,
+            device_type: 'web',
+            device_name: navigator.userAgent.slice(0, 255),
+          });
         }
       }
 
