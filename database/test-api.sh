@@ -64,7 +64,7 @@ COUNT=$(echo $RES | grep -o '"id"' | wc -l)
 echo ""
 echo "===== LOCATIONS ====="
 RES=$(curl -s $BACKEND/locations/tree)
-echo "$RES" | grep -q "UIN SUNAN GUNUNG DJATI" && pass "Locations tree: Root found" || fail "Locations tree: Root missing"
+echo "$RES" | grep -q "UNIVERSITAS" && pass "Locations tree: Root found" || fail "Locations tree: Root missing"
 echo "$RES" | grep -q "FAKULTAS" && pass "Locations tree: Fakultas levels exist" || fail "Locations tree: Fakultas missing"
 
 echo ""

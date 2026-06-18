@@ -8,5 +8,15 @@ const minioClient = new Client({
   secretKey: process.env.MINIO_PASSWORD,
 });
 
+const publicEndpoint = process.env.MINIO_PUBLIC_ENDPOINT;
+const publicClient = publicEndpoint ? new Client({
+  endPoint: publicEndpoint,
+  port: Number(process.env.MINIO_PUBLIC_PORT) || 443,
+  useSSL: process.env.MINIO_PUBLIC_SSL !== 'false',
+  accessKey: process.env.MINIO_USER,
+  secretKey: process.env.MINIO_PASSWORD,
+}) : minioClient;
+
 export const BUCKET_NAME = process.env.MINIO_BUCKET || 'silapor';
+export { publicClient };
 export default minioClient;
