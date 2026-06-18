@@ -89,6 +89,10 @@ export const create = async (req: Request, res: Response) => {
       .json({ message: "Location, category, dan title wajib diisi" });
   }
 
+  if (title.length > 255) {
+    return res.status(400).json({ message: "Title maksimal 255 karakter" });
+  }
+
   const report = await ReportsModel.create({
     reporter_id: user.id,
     location_id,

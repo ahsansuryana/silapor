@@ -49,7 +49,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 
 app.use((req, res, next) => {
   const start = new Date();

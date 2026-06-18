@@ -26,10 +26,13 @@ const loginLimiter = (req: any, res: any, next: any) => {
     if (entry.count >= 10) {
       return res.status(429).json({ message: "Terlalu banyak percobaan login. Coba lagi nanti." });
     }
-    entry.count++;
   } else {
-    loginAttempts.set(ip, { count: 1, resetAt: now + 60000 });
+    loginAttempts.set(ip, { count: 0, resetAt: now + 60000 });
   }
+  
+  // Attach helpers to req so controller can increment/reset
+  (req as any).rateLimitIp = ip;
+  (req as any).rateLimitStore = loginAttempts;
   
   next();
 };

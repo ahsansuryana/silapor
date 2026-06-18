@@ -114,16 +114,39 @@ export const registerAdmin = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   const { nim, password } = req.body;
-  const user = await UsersModel.findByNim(nim);
-  if (!user)
-    return res.status(401).json({ message: "NIM atau password salah" });
+  const ip = (req as any).rateLimitIp;
+  const store = (req as any).rateLimitStore as Map<string, { count: number; resetAt: number }>;
 
-  if (user.is_google)
+  const user = await UsersModel.findByNim(nim);
+  if (!user) {
+    if (ip && store) {
+      const entry = store.get(ip);
+      if (entry) entry.count++;
+    }
+    return res.status(401).json({ message: "NIM atau password salah" });
+  }
+
+  if (user.is_google) {
+    if (ip && store) {
+      const entry = store.get(ip);
+      if (entry) entry.count++;
+    }
     return res.status(400).json({ message: "Akun ini terdaftar via Google" });
+  }
 
   const valid = await bcrypt.compare(password, user.password!);
-  if (!valid)
+  if (!valid) {
+    if (ip && store) {
+      const entry = store.get(ip);
+      if (entry) entry.count++;
+    }
     return res.status(401).json({ message: "NIM atau password salah" });
+  }
+
+  // Successful login — reset rate limit counter
+  if (ip && store) {
+    store.delete(ip);
+  }
 
   const payload = { id: user.id, role: user.role };
   const accessToken = generateAccessToken(payload);
