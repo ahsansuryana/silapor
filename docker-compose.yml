@@ -101,7 +101,9 @@ services:
       # Firebase Admin
       FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
       FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL}
-      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY}
+      FIREBASE_SERVICE_ACCOUNT_PATH: /etc/secrets/service-account.json
+    volumes:
+      - ./secrets/service-account.json:/etc/secrets/service-account.json:ro
     ports:
       - "127.0.0.1:3000:3000"
     networks:
