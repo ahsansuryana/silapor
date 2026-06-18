@@ -44,7 +44,11 @@ export function getStoredFcmToken(): string | null {
 
 export async function registerFcmToken(token: string) {
   try {
-    await api.post('/auth/fcm-token', { token, device_type: 'web' });
+    await api.post('/auth/fcm-token', {
+      token,
+      device_type: 'web',
+      device_name: navigator.userAgent.slice(0, 255),
+    });
   } catch (err) {
     console.error('[FCM] Failed to register token:', err);
   }
@@ -74,9 +78,11 @@ export async function initFcm() {
 }
 
 export function listenForForegroundMessages() {
-  onMessage(messaging, (payload) => {
-    window.dispatchEvent(new CustomEvent('fcm-message', { detail: payload }));
-  });
+  try {
+    onMessage(messaging, (payload) => {
+      window.dispatchEvent(new CustomEvent('fcm-message', { detail: payload }));
+    });
+  } catch (err) {
+    console.error('[FCM] Failed to listen for foreground messages:', err);
+  }
 }
-
-listenForForegroundMessages();

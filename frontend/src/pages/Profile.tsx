@@ -51,7 +51,8 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await api.post('/auth/logout');
+      const fcmToken = localStorage.getItem('fcm_token');
+      await api.post('/auth/logout', fcmToken ? { token: fcmToken } : {});
     } catch (err) {
       console.error('Logout error:', err);
     }

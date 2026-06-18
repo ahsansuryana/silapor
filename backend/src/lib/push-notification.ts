@@ -6,12 +6,12 @@ export async function sendPush(
   title: string,
   body: string,
   url = '/notifications',
-) {
-  if (!messaging) return;
+): Promise<boolean> {
+  if (!messaging) return false;
 
   try {
     const tokens = await FcmTokensModel.findByUserId(userId);
-    if (!tokens.length) return;
+    if (!tokens.length) return false;
 
     const messages = tokens.map((t) => ({
       token: t.token,
@@ -36,7 +36,10 @@ export async function sendPush(
         }
       }
     }
+
+    return true;
   } catch (err) {
-    console.error('[PUSH] Failed to send:', err);
+    console.error(`[PUSH] Failed to send to user ${userId}:`, err);
+    return false;
   }
 }

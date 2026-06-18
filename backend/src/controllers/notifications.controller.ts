@@ -15,10 +15,13 @@ export const getUnreadCount = async (req: Request, res: Response) => {
 };
 
 export const markAsRead = async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const { id } = req.params as { id: string };
-  const notification = await NotificationsModel.markAsRead(id);
+  const notification = await NotificationsModel.findById(id);
   if (!notification) return res.status(404).json({ message: "Notifikasi tidak ditemukan" });
-  return res.json(notification);
+  if (notification.user_id !== user.id) return res.status(403).json({ message: "Akses ditolak" });
+  const updated = await NotificationsModel.markAsRead(id);
+  return res.json(updated);
 };
 
 export const markAllAsRead = async (req: Request, res: Response) => {
@@ -28,8 +31,11 @@ export const markAllAsRead = async (req: Request, res: Response) => {
 };
 
 export const remove = async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const { id } = req.params as { id: string };
-  const notification = await NotificationsModel.delete(id);
+  const notification = await NotificationsModel.findById(id);
   if (!notification) return res.status(404).json({ message: "Notifikasi tidak ditemukan" });
+  if (notification.user_id !== user.id) return res.status(403).json({ message: "Akses ditolak" });
+  await NotificationsModel.delete(id);
   return res.json({ message: "Notifikasi berhasil dihapus" });
 };
