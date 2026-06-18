@@ -5,7 +5,22 @@ import api from './api';
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY;
 const LS_KEY = 'fcm_token';
 
-export async function requestFcmToken(): Promise<string | null> {
+function clearFcmDb(): Promise<void> {
+  return new Promise((resolve) => {
+    const names = ['firebase-messaging-database', 'firebase-installations-database'];
+    let done = 0;
+    for (const name of names) {
+      const req = indexedDB.deleteDatabase(name);
+      req.onsuccess = req.onerror = req.onblocked = () => {
+        done++;
+        if (done === names.length) resolve();
+      };
+    }
+    if (!names.length) resolve();
+  });
+}
+
+export async function requestFcmToken(forceClean = false): Promise<string | null> {
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
@@ -17,6 +32,10 @@ export async function requestFcmToken(): Promise<string | null> {
     if (!swReg) {
       console.warn('[FCM] Service worker not ready');
       return null;
+    }
+
+    if (forceClean) {
+      await clearFcmDb();
     }
 
     const token = await getToken(messaging, {
@@ -68,7 +87,10 @@ export async function initFcm() {
   const accessToken = localStorage.getItem('access_token');
   if (!accessToken) return;
 
-  const token = await requestFcmToken();
+  let token = await requestFcmToken();
+  if (!token) {
+    token = await requestFcmToken(true);
+  }
   if (token) {
     const prev = getStoredFcmToken();
     if (token !== prev) {

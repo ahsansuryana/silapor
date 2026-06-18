@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import api from "../lib/api";
 import { getUserFromToken } from "../lib/jwt";
-import { requestFcmToken } from "../lib/fcm";
+import { initFcm } from "../lib/fcm";
 
 
 export default function Login() {
@@ -20,9 +20,6 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Start FCM request BEFORE await to keep user gesture active
-      const fcmPromise = requestFcmToken();
-
       const { data } = await api.post("/auth/login", {
         nim,
         password,
@@ -31,18 +28,7 @@ export default function Login() {
       localStorage.setItem("access_token", data.accessToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      const token = await fcmPromise;
-      if (token) {
-        const prev = localStorage.getItem('fcm_token');
-        if (token !== prev) {
-          localStorage.setItem('fcm_token', token);
-          await api.post('/auth/fcm-token', {
-            token,
-            device_type: 'web',
-            device_name: navigator.userAgent.slice(0, 255),
-          });
-        }
-      }
+      initFcm();
 
       // Redirect based on role
       if (data.user.role === "ADMIN") {
