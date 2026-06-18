@@ -1,10 +1,11 @@
 let swRegistration: ServiceWorkerRegistration | null = null;
 let updateCallback: (() => void) | null = null;
 
-export function initSW() {
-  if (!('serviceWorker' in navigator)) return;
+export async function initSW() {
+  if (!('serviceWorker' in navigator)) return null;
 
-  navigator.serviceWorker.register('/sw.js').then((reg) => {
+  try {
+    const reg = await navigator.serviceWorker.register('/sw.js');
     swRegistration = reg;
 
     if (reg.waiting && navigator.serviceWorker.controller) {
@@ -21,9 +22,12 @@ export function initSW() {
         }
       });
     });
-  }).catch((err) => {
+
+    return reg;
+  } catch (err) {
     console.error('[SW] Registration failed:', err);
-  });
+    return null;
+  }
 }
 
 export function onSWUpdate(cb: () => void) {

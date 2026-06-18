@@ -13,5 +13,4 @@ createRoot(document.getElementById('root')!).render(
 )
 
 initPwaInstall();
-initSW();
-initFcm();
+initSW().then(() => initFcm());

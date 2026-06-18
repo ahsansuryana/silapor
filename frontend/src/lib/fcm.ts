@@ -5,7 +5,7 @@ import api from './api';
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY;
 const LS_KEY = 'fcm_token';
 
-export async function requestFcmToken(): Promise<string | null> {
+export async function requestFcmToken(swReg?: ServiceWorkerRegistration): Promise<string | null> {
   try {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
@@ -13,7 +13,14 @@ export async function requestFcmToken(): Promise<string | null> {
       return null;
     }
 
-    const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+    if (!swReg) {
+      swReg = await navigator.serviceWorker.ready.catch(() => undefined) as any;
+    }
+
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: swReg,
+    });
     if (!token) {
       console.warn('[FCM] No token returned');
       return null;
@@ -55,15 +62,15 @@ export async function initFcm() {
   const accessToken = localStorage.getItem('access_token');
   if (!accessToken) return;
 
-  const token = await requestFcmToken();
+  const swReg = await navigator.serviceWorker.ready.catch(() => undefined) as ServiceWorkerRegistration | undefined;
+
+  const token = await requestFcmToken(swReg);
   if (token) {
     const prev = getStoredFcmToken();
     if (token !== prev) {
       await registerFcmToken(token);
     }
   }
-
-  listenForForegroundMessages();
 }
 
 export function listenForForegroundMessages() {
@@ -71,3 +78,5 @@ export function listenForForegroundMessages() {
     window.dispatchEvent(new CustomEvent('fcm-message', { detail: payload }));
   });
 }
+
+listenForForegroundMessages();
