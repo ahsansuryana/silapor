@@ -13,8 +13,15 @@ export async function requestFcmToken(): Promise<string | null> {
       return null;
     }
 
+    const swReg = await navigator.serviceWorker.ready.catch(() => undefined) as ServiceWorkerRegistration | undefined;
+    if (!swReg) {
+      console.warn('[FCM] Service worker not ready');
+      return null;
+    }
+
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: swReg,
     });
     if (!token) {
       console.warn('[FCM] No token returned');

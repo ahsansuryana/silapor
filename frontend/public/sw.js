@@ -79,6 +79,7 @@ self.addEventListener('fetch', (event) => {
 
   if (url.pathname === '/sw.js') return;
   if (url.pathname.startsWith('/api/')) return;
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   if (event.request.destination === 'document') {
     event.respondWith(
