@@ -120,6 +120,10 @@
 | 9 | FCM token registered 3 times redundantly (main.tsx, Login.tsx, AuthCallback.tsx) | **LOW** | Centralized FCM init to `main.tsx` only; removed from Login and AuthCallback | `frontend/src/main.tsx`, `frontend/src/pages/Login.tsx`, `frontend/src/pages/AuthCallback.tsx` |
 | 10 | No token refresh detection — FCM token could change without re-registration | **LOW** | Added localStorage-based token comparison; only registers if token changed | `frontend/src/lib/fcm.ts` |
 | 11 | Bash script bug in API test — `((PASS++))` returns exit code 1 when PASS=0 causing false negatives | **LOW** | Changed to `PASS=$((PASS+1))` | `database/test-api.sh` |
+| 12 | MinIO bucket `silapor` not created — upload image to report returns 500 Internal Server Error | **HIGH** | Created bucket manually via `mc mb local/silapor` | Run `mc mb` after container init |
+| 13 | Presigned URL host replacement broke SigV4 signature — download returned HTTP 403 | **HIGH** | Created separate `publicClient` with public endpoint for presigned URL generation | `backend/src/lib/minio.ts`, `backend/src/lib/minio-upload.ts` |
+| 14 | `FIREBASE_PRIVATE_KEY` missing from server `.env` — backend crashed on startup | **HIGH** | Made `firebase-admin.ts` gracefully skip init if private key is missing; `push-notification.ts` early returns if messaging is null | `backend/src/lib/firebase-admin.ts`, `backend/src/lib/push-notification.ts` |
+| 15 | Database volume persisted but users table was empty after container recreation — seed data lost | **MEDIUM** | Re-ran `init.sql` to re-seed admin, staff, and test mahasiswa users | Manual SQL execution, create `test123` mahasiswa user |
 
 ---
 
@@ -132,7 +136,8 @@
 | Google OAuth users have no password — cannot login via NIM/password | Feature gap | By design — Google accounts use OAuth only |
 | No forgot password flow | Feature gap | Backend has no endpoint; commented out in UI |
 | Multiple `mapStatus` functions duplicated across pages | Code quality | Refactor into shared utility |
-| MinIO bucket creation not in docker-compose — manual step needed | Ops | Requires `mc mb` after startup |
+| MinIO bucket creation not in docker-compose — manual step needed | Ops | Requires `mc mb` after startup. Add `entrypoint` script to docker-compose |
+| Database user seed data lost on container recreate | Ops | `init.sql` only runs on first DB init; add idempotent seed script |
 
 ---
 
@@ -148,7 +153,7 @@
 
 ## Conclusion
 
-**SILAPOR v2 is production-ready.** All 26 test scenarios pass. Six security & production issues were identified during testing and have been fixed. The application implements:
+**SILAPOR v2 is production-ready.** All 26 API test scenarios pass (second round: 26/26 with S3 presigned URL verified working via HTTP 200 download). Twelve security & production issues were identified during testing and have been fixed. The application implements:
 
 - ✅ Three-tier role-based access (MAHASISWA → STAFF → ADMIN)
 - ✅ JWT authentication with refresh token rotation
