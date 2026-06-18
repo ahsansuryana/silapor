@@ -13,12 +13,14 @@ function getServiceAccount() {
   };
 }
 
-if (!admin.apps.length) {
-  const serviceAccount = getServiceAccount();
+const serviceAccount = getServiceAccount();
+const hasFirebaseCreds = !!(serviceAccount.privateKey && serviceAccount.clientEmail && serviceAccount.projectId);
+
+if (hasFirebaseCreds && !admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
   });
 }
 
-export const messaging = admin.messaging();
+export const messaging = hasFirebaseCreds ? admin.messaging() : null;
 export default admin;

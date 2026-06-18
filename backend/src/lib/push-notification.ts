@@ -7,6 +7,8 @@ export async function sendPush(
   body: string,
   url = '/notifications',
 ) {
+  if (!messaging) return;
+
   try {
     const tokens = await FcmTokensModel.findByUserId(userId);
     if (!tokens.length) return;
