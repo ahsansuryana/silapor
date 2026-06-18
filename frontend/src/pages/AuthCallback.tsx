@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { initFcm } from "../lib/fcm";
+import { requestFcmToken, registerFcmToken } from "../lib/fcm";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -12,7 +12,17 @@ export default function AuthCallback() {
       localStorage.setItem("access_token", token);
       window.history.replaceState({}, document.title, window.location.pathname);
 
-      initFcm();
+      (async () => {
+        let fcmToken = await requestFcmToken();
+        if (!fcmToken) {
+          fcmToken = await requestFcmToken(true);
+        }
+        if (fcmToken) {
+          await registerFcmToken(fcmToken);
+          localStorage.setItem('fcm_token', fcmToken);
+        }
+      })();
+
       navigate("/home", { replace: true });
     } else {
       navigate("/login", { replace: true });
