@@ -76,6 +76,9 @@ services:
       # MinIO
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
+      MINIO_PUBLIC_ENDPOINT: s3-silapor.nuxantara.site
+      MINIO_PUBLIC_PORT: 443
+      MINIO_PUBLIC_SSL: "true"
       MINIO_USER: ${MINIO_USER}
       MINIO_PASSWORD: ${MINIO_PASSWORD}
       MINIO_BUCKET: ${MINIO_BUCKET}

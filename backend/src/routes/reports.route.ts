@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { authenticate } from "../middlewares/auth.middleware";
+import { authenticate, requireAdmin } from "../middlewares/auth.middleware";
 import {
   getAll,
   getById,
@@ -30,9 +30,9 @@ const upload = multer({
   },
 });
 
-router.get("/", authenticate, getAll);
+router.get("/", authenticate, requireAdmin, getAll);
 router.get("/my", authenticate, getMyReports);
-router.get("/stats", authenticate, getStats);
+router.get("/stats", authenticate, requireAdmin, getStats);
 router.get("/status/:status", authenticate, getByStatus);
 router.get("/priority/:priority", authenticate, getByPriority);
 router.get("/:id", authenticate, getById);

@@ -97,7 +97,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE).then((c) => c.put(event.request, clone));
         }
         return response;
-      });
+      }).catch(() => cached);
     }),
   );
 });

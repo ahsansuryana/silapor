@@ -14,6 +14,7 @@ export async function sendPush(
     const messages = tokens.map((t) => ({
       token: t.token,
       notification: { title, body },
+      data: { url },
       webpush: {
         fcmOptions: { link: url } as any,
       },

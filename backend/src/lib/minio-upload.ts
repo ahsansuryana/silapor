@@ -15,5 +15,16 @@ export const deleteFromMinIO = async (objectKey: string): Promise<void> => {
 };
 
 export const getPresignedUrl = async (objectKey: string, expires = 3600): Promise<string> => {
-  return minioClient.presignedGetObject(BUCKET_NAME, objectKey, expires);
+  const url = await minioClient.presignedGetObject(BUCKET_NAME, objectKey, expires);
+
+  const publicEndpoint = process.env.MINIO_PUBLIC_ENDPOINT;
+  if (publicEndpoint) {
+    const parsed = new URL(url);
+    parsed.hostname = publicEndpoint;
+    parsed.port = process.env.MINIO_PUBLIC_PORT || '443';
+    parsed.protocol = process.env.MINIO_PUBLIC_SSL !== 'false' ? 'https:' : 'http:';
+    return parsed.toString();
+  }
+
+  return url;
 };

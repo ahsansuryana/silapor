@@ -57,6 +57,7 @@ export default function Profile() {
     }
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
+    localStorage.removeItem('fcm_token');
     navigate('/login');
   };
 

@@ -3,6 +3,7 @@ import { messaging } from './firebase';
 import api from './api';
 
 const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY;
+const LS_KEY = 'fcm_token';
 
 export async function requestFcmToken(): Promise<string | null> {
   try {
@@ -18,11 +19,20 @@ export async function requestFcmToken(): Promise<string | null> {
       return null;
     }
 
+    const prev = localStorage.getItem(LS_KEY);
+    if (token !== prev) {
+      localStorage.setItem(LS_KEY, token);
+    }
+
     return token;
   } catch (err) {
     console.error('[FCM] Failed to get token:', err);
     return null;
   }
+}
+
+export function getStoredFcmToken(): string | null {
+  return localStorage.getItem(LS_KEY);
 }
 
 export async function registerFcmToken(token: string) {
@@ -39,6 +49,21 @@ export async function unregisterFcmToken(token: string) {
   } catch (err) {
     console.error('[FCM] Failed to unregister token:', err);
   }
+}
+
+export async function initFcm() {
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) return;
+
+  const token = await requestFcmToken();
+  if (token) {
+    const prev = getStoredFcmToken();
+    if (token !== prev) {
+      await registerFcmToken(token);
+    }
+  }
+
+  listenForForegroundMessages();
 }
 
 export function listenForForegroundMessages() {

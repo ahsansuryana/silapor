@@ -227,7 +227,11 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 // ─── Logout ─────────────────────────────────────────────
 
-export const logout = (_req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  if (user?.id) {
+    await FcmTokensModel.deleteByUserId(user.id);
+  }
   clearRefreshTokenCookie(res);
   return res.json({ message: "Logout berhasil" });
 };

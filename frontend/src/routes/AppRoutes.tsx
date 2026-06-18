@@ -18,6 +18,18 @@ import UserManagement from "../pages/admin/UserManagement.tsx";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import { useEffect, useState } from "react";
 
+function NotFound() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-surface">
+      <div className="text-center space-y-4">
+        <h1 className="font-headline font-extrabold text-6xl text-primary">404</h1>
+        <p className="font-body text-on-surface-variant">Halaman tidak ditemukan</p>
+        <a href="/home" className="inline-block px-6 py-3 bg-primary text-white rounded-xl font-headline font-bold">Kembali ke Home</a>
+      </div>
+    </div>
+  );
+}
+
 function AppRoutes() {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,12 +46,38 @@ function AppRoutes() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
-      <Route path="/home" element={<UserHome />} />
-      <Route path="/report/new" element={<CreateReport />} />
-      <Route path="/reports" element={<MyReports />} />
-      <Route path="/report/:id" element={<ReportDetail />} />
-      <Route path="/notifications" element={<Notifications />} />
-      <Route path="/profile" element={<Profile />} />
+      
+      {/* Authenticated routes - requires any valid login */}
+      <Route path="/home" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <UserHome />
+        </ProtectedRoute>
+      } />
+      <Route path="/report/new" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <CreateReport />
+        </ProtectedRoute>
+      } />
+      <Route path="/reports" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <MyReports />
+        </ProtectedRoute>
+      } />
+      <Route path="/report/:id" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <ReportDetail />
+        </ProtectedRoute>
+      } />
+      <Route path="/notifications" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <Notifications />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute allowedRoles={["MAHASISWA", "STAFF", "ADMIN"]}>
+          <Profile />
+        </ProtectedRoute>
+      } />
       
       {/* Staff routes - only STAFF */}
       <Route path="/staff" element={
@@ -79,6 +117,9 @@ function AppRoutes() {
           <UserManagement />
         </ProtectedRoute>
       } />
+
+      {/* 404 catch-all */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

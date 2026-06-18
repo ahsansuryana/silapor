@@ -1,0 +1,10 @@
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-saintek';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-adhum';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-ushuluddin';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-dakwah';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-tarbiyah';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-syariah';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-psikologi';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-hukum';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-ekonomi';
+UPDATE public.users SET password = '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq' WHERE "NIM" = 'staff-farmasi';

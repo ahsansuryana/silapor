@@ -51,6 +51,14 @@ CREATE TABLE public.categories (
     updated_at timestamptz
 );
 
+-- Seed data: categories
+INSERT INTO public.categories (id, name, short_description, created_at) VALUES
+('a1b2c3d4-0001-4000-8000-000000000001', 'Infrastruktur', 'Kerusakan gedung, jalan, jembatan, dan fasilitas fisik lainnya', now()),
+('a1b2c3d4-0002-4000-8000-000000000002', 'Kebersihan', 'Sampah, sanitasi, dan kebersihan lingkungan', now()),
+('a1b2c3d4-0003-4000-8000-000000000003', 'Keamanan', 'Gangguan keamanan, pencahayaan, dan pengawasan', now()),
+('a1b2c3d4-0004-4000-8000-000000000004', 'Fasilitas', 'Kerusakan peralatan, AC, listrik, air, dan jaringan', now()),
+('a1b2c3d4-0005-4000-8000-000000000005', 'Lainnya', 'Laporan yang tidak termasuk kategori di atas', now());
+
 -- reports
 CREATE TABLE public.reports (
     id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
@@ -150,16 +158,16 @@ INSERT INTO public.locations (id, name, type, parent_id, created_at, updated_at)
 -- Seed data: users
 INSERT INTO public.users (id, name, "NIM", password, role, created_at) VALUES
 ('b83e1f32-2a1d-4696-b14d-bff26cf461e6', 'Admin', 'admin', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'ADMIN', now()),
-('abae62ef-929e-4e43-8ecc-9f6755363cc2', 'Staff Saintek', 'staff-saintek', '$2b$10$ph1ijjOAV1KfgdCL2pSwd.DXrow8G4lUVdpcJp0sM7OrpHG3jLCj.', 'STAFF', now()),
-('0fd4a5d8-2668-4b9f-8f8f-ca0fa636d9b9', 'Staff Adhum', 'staff-adhum', '$2b$10$u1SNsHR0l.L1hCqUZmdX8u3oWa2YNa0WcS8/EFDf2vzjx/k.QRRwW', 'STAFF', now()),
-('93f6ba1c-8af3-4ea2-90a3-e71b11719dcc', 'Staff Ushuluddin', 'staff-ushuluddin', '$2b$10$uo9qK593aD754aDCBqzFyevqmfuRrhRZOkdphSGzN/5RMjmjv1HFu', 'STAFF', now()),
-('1314ffe0-f3c2-4a1c-9e40-b581f1feeb2f', 'Staff Dakwah', 'staff-dakwah', '$2b$10$NDhVpwZNjcWkqNu3MIeVPOVKfXnZDpV1c1QnCKdSBR9kIcwkFV5Wq', 'STAFF', now()),
-('9bbe8a0a-c931-446a-93a4-9ab71c803cfa', 'Staff Tarbiyah', 'staff-tarbiyah', '$2b$10$EOHjDuwumOBbIuy5SlHh7ezVGsPpU5KhxcbB2UyX9eTHzU.AOdAtK', 'STAFF', now()),
-('336b53a7-26f8-4600-9a81-dd49a30984f4', 'Staff Syariah', 'staff-syariah', '$2b$10$/FVST1sFySYbDR9JQBQxQuDKrokuL.MEKYQ6IBcdIPnxh7WC.0Tby', 'STAFF', now()),
-('08b12ff3-67a7-45fc-a6d1-b88baf87b988', 'Staff Psikologi', 'staff-psikologi', '$2b$10$Xadi2Vw0deNgUKzV.4NkTelHKyO.Vo/Nf.rvdLC52/qp7w/eMp2SC', 'STAFF', now()),
-('807114c5-08e2-4148-ba8d-2b49254f6ff6', 'Staff Hukum', 'staff-hukum', '$2b$10$omRffdq0K2ByxRypEkD0vee22hHjwY.WpSaeKolHllUm6FAt4wAYK', 'STAFF', now()),
-('c831313b-997b-4f52-bcea-9a7f9ba6bf72', 'Staff Ekonomi', 'staff-ekonomi', '$2b$10$UBMCGE3WnSS0yumKwHLJZOQpZp1H2WnmBhfg/Dfo2mGa5Ig34wO5y', 'STAFF', now()),
-('1c8c2193-984f-41d8-bc90-d715f79daad8', 'Staff Farmasi', 'staff-farmasi', '$2b$10$bwizRrYK4VwjuuJ7uhSyMuTeWrjpOdnlDZJ3RCh1WLRiLdLu8Kx96', 'STAFF', now());
+('abae62ef-929e-4e43-8ecc-9f6755363cc2', 'Staff Saintek', 'staff-saintek', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('0fd4a5d8-2668-4b9f-8f8f-ca0fa636d9b9', 'Staff Adhum', 'staff-adhum', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('93f6ba1c-8af3-4ea2-90a3-e71b11719dcc', 'Staff Ushuluddin', 'staff-ushuluddin', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('1314ffe0-f3c2-4a1c-9e40-b581f1feeb2f', 'Staff Dakwah', 'staff-dakwah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('9bbe8a0a-c931-446a-93a4-9ab71c803cfa', 'Staff Tarbiyah', 'staff-tarbiyah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('336b53a7-26f8-4600-9a81-dd49a30984f4', 'Staff Syariah', 'staff-syariah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('08b12ff3-67a7-45fc-a6d1-b88baf87b988', 'Staff Psikologi', 'staff-psikologi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('807114c5-08e2-4148-ba8d-2b49254f6ff6', 'Staff Hukum', 'staff-hukum', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('c831313b-997b-4f52-bcea-9a7f9ba6bf72', 'Staff Ekonomi', 'staff-ekonomi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
+('1c8c2193-984f-41d8-bc90-d715f79daad8', 'Staff Farmasi', 'staff-farmasi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now());
 
 -- Seed data: user_staff_location
 INSERT INTO public.user_staff_location (staff_id, location_id, created_at) VALUES
