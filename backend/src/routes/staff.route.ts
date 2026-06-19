@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { authenticate, requireAdmin } from "../middlewares/auth.middleware";
+import { authenticate, requireAdmin, requireRole } from "../middlewares/auth.middleware";
 import { UsersModel } from "../models/users.model";
 
 const router = Router();
 
-router.get("/", authenticate, requireAdmin, async (req, res) => {
+router.get("/", authenticate, requireRole("STAFF", "ADMIN"), async (req, res) => {
   try {
     const staff = await UsersModel.getStaffWithLocations();
     res.json(staff);

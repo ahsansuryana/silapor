@@ -1,5 +1,5 @@
 -- ─────────────────────────────────────────
--- SILAPOR - Database Schema
+-- SILAPOR - Database Schema + Seed Data
 -- ─────────────────────────────────────────
 
 -- ENUMs
@@ -141,43 +141,65 @@ CREATE TABLE public.fcm_tokens (
     updated_at timestamptz DEFAULT now()
 );
 
--- Seed data: locations
-INSERT INTO public.locations (id, name, type, parent_id, created_at, updated_at) VALUES
-('1061b345-33c0-461a-b6c7-b995440b6d29', 'UIN Sultan Maulana Hasanuddin Banten', 'UNIVERSITAS', NULL, now(), now()),
-('d9c17ff0-8f43-460e-903c-006e1154d54a', 'Sains dan Teknologi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('a34cdced-df20-4887-aeae-589e5029944d', 'Adab dan Humaniora', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('43a03e07-e0d9-4cef-96c3-6700c130a7cb', 'Ushuluddin', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('d1395635-434d-4623-afcb-c357d7d9c0ad', 'Dakwah', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('63abc627-51a8-4e05-ad82-bf9e69b12545', 'Tarbiyah dan Keguruan', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('a8573e9f-8d2c-4bcd-9e6d-ed28fed9474a', 'Syariah', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('7494b96b-0b16-4409-9e75-2f401ce5b611', 'Psikologi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('4f500cd0-8fc1-4464-8fe6-173c9ae8bbb7', 'Hukum', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('cf8e6f05-fa7f-4a64-9451-34637462ea80', 'Ekonomi dan Bisnis Islam', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
-('d78c22ab-cca8-44dc-bb41-854dfdb42617', 'Farmasi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now());
+-- ─────────────────────────────────────────
+-- SEED DATA
+-- ─────────────────────────────────────────
 
--- Seed data: users
+-- Locations: universitas + fakultas
+INSERT INTO public.locations (id, name, type, parent_id, created_at, updated_at) VALUES
+('1061b345-33c0-461a-b6c7-b995440b6d29', 'UIN SGD Kampus 1', 'UNIVERSITAS', NULL, now(), now()),
+('d9c17ff0-8f43-460e-903c-006e1154d54a', 'Fakultas Sains dan Teknologi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('a34cdced-df20-4887-aeae-589e5029944d', 'Fakultas Adab dan Humaniora', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('43a03e07-e0d9-4cef-96c3-6700c130a7cb', 'Fakultas Ilmu Sosial dan Ilmu Politik', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('d1395635-434d-4623-afcb-c357d7d9c0ad', 'Fakultas Dakwah Dan Komunikasi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('a8573e9f-8d2c-4bcd-9e6d-ed28fed9474a', 'Fakultas Ushuluddin', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('7494b96b-0b16-4409-9e75-2f401ce5b611', 'Fakultas Psikologi', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now()),
+('4f500cd0-8fc1-4464-8fe6-173c9ae8bbb7', 'Fakultas Syariah dan Hukum', 'FAKULTAS', '1061b345-33c0-461a-b6c7-b995440b6d29', now(), now());
+
+-- Locations: sub-areas di bawah Fakultas Sains dan Teknologi
+INSERT INTO public.locations (id, name, type, parent_id, created_at, updated_at) VALUES
+('7287f3a4-a06c-49c9-a899-dbe81cc4b8a8', 'Kelas Lantai 1', 'AREA', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('a052cd67-dc00-4446-a042-fa71834cd64d', 'Kelas Lantai 2', 'AREA', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('e0940e70-bcba-4470-a47e-99a8b1a0fa77', 'Kelas Lantai 3', 'AREA', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('aa9cfb7f-22dc-432d-b412-aa61bd4f93de', 'Kelas Lantai 4', 'AREA', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('6fa29bdb-fd1b-49c6-9812-6eb0d71dfaf8', 'Perpustakaan Jurusan', 'RUANGAN', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('037e69c6-6874-4835-8e4f-04c443339179', 'Toilet', 'RUANGAN', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('57ad1ae8-1338-4580-934a-dcea1aa77fac', 'Lift', 'RUANGAN', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now()),
+('1ce14468-3c53-4ea4-aae2-ae9380099a42', 'Loby Utama', 'AREA', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now(), now());
+
+-- Locations: ruangan di bawah Kelas Lantai 4
+INSERT INTO public.locations (id, name, type, parent_id, created_at, updated_at) VALUES
+('e2dfdb3d-4e4f-433b-9454-52cd13335f56', 'R 401', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('7e05bacb-978a-450b-96f9-03d73f0c2605', 'R 411', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('1ea6a128-e5fd-4e2d-8284-22577e047db7', 'R 412', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('865b46e0-3f4d-4a2a-a5ed-167dd5d9d1b5', 'R 410', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('724354f1-b137-4ec0-b7b1-f68c4c01c196', 'R 409', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('96c0da8a-e2ee-4ac4-9c51-2f649b17f0cb', 'Lab AI 1', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('20701831-0a87-4a44-8087-2e0fcaa85ed7', 'Lab AI 2', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('f4c8201f-0257-4ba3-801b-125630bbd215', 'Lab DC 2', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now()),
+('8c85537d-f2dc-4881-9da5-e45740c698fc', 'Lab DC 1', 'RUANGAN', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now(), now());
+
+-- Users: admin + staff
 INSERT INTO public.users (id, name, "NIM", password, role, created_at) VALUES
 ('b83e1f32-2a1d-4696-b14d-bff26cf461e6', 'Admin', 'admin', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'ADMIN', now()),
 ('abae62ef-929e-4e43-8ecc-9f6755363cc2', 'Staff Saintek', 'staff-saintek', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
 ('0fd4a5d8-2668-4b9f-8f8f-ca0fa636d9b9', 'Staff Adhum', 'staff-adhum', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
 ('93f6ba1c-8af3-4ea2-90a3-e71b11719dcc', 'Staff Ushuluddin', 'staff-ushuluddin', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
 ('1314ffe0-f3c2-4a1c-9e40-b581f1feeb2f', 'Staff Dakwah', 'staff-dakwah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
-('9bbe8a0a-c931-446a-93a4-9ab71c803cfa', 'Staff Tarbiyah', 'staff-tarbiyah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
-('336b53a7-26f8-4600-9a81-dd49a30984f4', 'Staff Syariah', 'staff-syariah', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
 ('08b12ff3-67a7-45fc-a6d1-b88baf87b988', 'Staff Psikologi', 'staff-psikologi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
 ('807114c5-08e2-4148-ba8d-2b49254f6ff6', 'Staff Hukum', 'staff-hukum', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
-('c831313b-997b-4f52-bcea-9a7f9ba6bf72', 'Staff Ekonomi', 'staff-ekonomi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now()),
-('1c8c2193-984f-41d8-bc90-d715f79daad8', 'Staff Farmasi', 'staff-farmasi', '$2b$10$uWbdHDIsBg7GdAT4uIjbEeUgcDl7HjGdkHd8SsqaRt9CVSjGbviwq', 'STAFF', now());
+('9e92c013-fdc3-46b0-aebb-84f4b084997d', 'Staff Sospol', 'STAFF-SOSPOL', '$2b$10$3pi3HO/iTg4JT1cOJ5P8q.FxG4oCz7i3tOpePDsWFR/MhQM.TX1rC', 'STAFF', now()),
+('610e6012-f3d4-4c5a-8fc6-b124c6893b68', 'staff informatika', 'staff-informatika', '$2b$10$WUowfY1SkG9/Vz71HTgWL.27C2OLVEEzmkaCUb65IXDb7Cjx/WlS.', 'STAFF', now()),
+('6c219529-237f-4b14-b4de-1903e5e83936', 'Staff Perpustakaan Saintek', 'staff-perpus-saintek', '$2b$10$mtqGGHkO5RjKzlkoJljAYewf4wsFi7vYJ.1f90ev3dxnX7rD2gXTy', 'STAFF', now());
 
--- Seed data: user_staff_location
+-- Staff → Location assignments
 INSERT INTO public.user_staff_location (staff_id, location_id, created_at) VALUES
 ('abae62ef-929e-4e43-8ecc-9f6755363cc2', 'd9c17ff0-8f43-460e-903c-006e1154d54a', now()),
 ('0fd4a5d8-2668-4b9f-8f8f-ca0fa636d9b9', 'a34cdced-df20-4887-aeae-589e5029944d', now()),
-('93f6ba1c-8af3-4ea2-90a3-e71b11719dcc', '43a03e07-e0d9-4cef-96c3-6700c130a7cb', now()),
+('93f6ba1c-8af3-4ea2-90a3-e71b11719dcc', 'a8573e9f-8d2c-4bcd-9e6d-ed28fed9474a', now()),
 ('1314ffe0-f3c2-4a1c-9e40-b581f1feeb2f', 'd1395635-434d-4623-afcb-c357d7d9c0ad', now()),
-('9bbe8a0a-c931-446a-93a4-9ab71c803cfa', '63abc627-51a8-4e05-ad82-bf9e69b12545', now()),
-('336b53a7-26f8-4600-9a81-dd49a30984f4', 'a8573e9f-8d2c-4bcd-9e6d-ed28fed9474a', now()),
 ('08b12ff3-67a7-45fc-a6d1-b88baf87b988', '7494b96b-0b16-4409-9e75-2f401ce5b611', now()),
 ('807114c5-08e2-4148-ba8d-2b49254f6ff6', '4f500cd0-8fc1-4464-8fe6-173c9ae8bbb7', now()),
-('c831313b-997b-4f52-bcea-9a7f9ba6bf72', 'cf8e6f05-fa7f-4a64-9451-34637462ea80', now()),
-('1c8c2193-984f-41d8-bc90-d715f79daad8', 'd78c22ab-cca8-44dc-bb41-854dfdb42617', now());
+('9e92c013-fdc3-46b0-aebb-84f4b084997d', '43a03e07-e0d9-4cef-96c3-6700c130a7cb', now()),
+('610e6012-f3d4-4c5a-8fc6-b124c6893b68', 'aa9cfb7f-22dc-432d-b412-aa61bd4f93de', now()),
+('6c219529-237f-4b14-b4de-1903e5e83936', '6fa29bdb-fd1b-49c6-9812-6eb0d71dfaf8', now());
