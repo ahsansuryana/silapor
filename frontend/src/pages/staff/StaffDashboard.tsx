@@ -15,9 +15,9 @@ import BottomNav from "../../components/layout/BottomNav";
 
 export default function StaffDashboard() {
   const [stats, setStats] = useState({
-    active: 0,
+    total: 0,
     pending: 0,
-    resolved: 0,
+    accepted: 0,
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -29,11 +29,11 @@ export default function StaffDashboard() {
       const { data: tasks } = await api.get('/assignments/my-tasks');
       const assignments = tasks || [];
 
-      const active = assignments.filter((a: any) => a.status === 'diproses' || a.report?.status === 'diproses').length;
-      const pending = assignments.filter((a: any) => a.status === 'menunggu' || a.report?.status === 'menunggu').length;
-      const resolved = assignments.filter((a: any) => a.status === 'selesai' || a.report?.status === 'selesai').length;
+      const total = assignments.length;
+      const pending = assignments.filter((a: any) => a.status === 'menunggu').length;
+      const accepted = assignments.filter((a: any) => a.status === 'diterima').length;
 
-      setStats({ active, pending, resolved });
+      setStats({ total, pending, accepted });
     } catch (err) {
       console.error('Failed to fetch dashboard data:', err);
     } finally {
@@ -43,20 +43,20 @@ export default function StaffDashboard() {
 
   const statCards = [
     {
-      label: "Active Reports",
-      value: stats.active.toString(),
+      label: "Total Laporan",
+      value: stats.total.toString(),
       icon: <Clock className="w-5 h-5" />,
       color: "bg-secondary-container/20 text-on-secondary-container",
     },
     {
-      label: "Pending Tasks",
+      label: "Menunggu",
       value: stats.pending.toString().padStart(2, '0'),
       icon: <AlertCircle className="w-5 h-5" />,
       color: "bg-tertiary-container/20 text-on-tertiary-container",
     },
     {
-      label: "Resolved Today",
-      value: stats.resolved.toString(),
+      label: "Diterima",
+      value: stats.accepted.toString(),
       icon: <CheckCircle2 className="w-5 h-5" />,
       color: "bg-primary/10 text-primary",
     },
