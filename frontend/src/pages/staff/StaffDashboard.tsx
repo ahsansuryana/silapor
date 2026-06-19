@@ -26,17 +26,12 @@ export default function StaffDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [allReports, myTasks] = await Promise.all([
-        api.get('/reports'),
-        api.get('/assignments/my-tasks'),
-      ]);
+      const { data: tasks } = await api.get('/assignments/my-tasks');
+      const assignments = tasks || [];
 
-      const reports = allReports.data || [];
-      const tasks = myTasks.data || [];
-
-      const active = reports.filter((r: any) => r.status === 'diproses').length;
-      const pending = reports.filter((r: any) => r.status === 'menunggu').length;
-      const resolved = reports.filter((r: any) => r.status === 'selesai').length;
+      const active = assignments.filter((a: any) => a.status === 'diproses' || a.report?.status === 'diproses').length;
+      const pending = assignments.filter((a: any) => a.status === 'menunggu' || a.report?.status === 'menunggu').length;
+      const resolved = assignments.filter((a: any) => a.status === 'selesai' || a.report?.status === 'selesai').length;
 
       setStats({ active, pending, resolved });
     } catch (err) {
