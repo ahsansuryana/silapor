@@ -24,6 +24,10 @@ export default function StaffDashboard() {
   const role = getRoleFromToken();
   const isAdmin = role === "ADMIN";
 
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
   const fetchDashboardData = async () => {
     try {
       const { data: tasks } = await api.get('/assignments/my-tasks');
