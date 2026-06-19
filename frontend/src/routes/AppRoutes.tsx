@@ -79,7 +79,7 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
       
-      {/* Staff routes */}
+      {/* Staff routes - only STAFF */}
       <Route path="/staff" element={
         <ProtectedRoute allowedRoles={["STAFF"]}>
           <StaffDashboard />
